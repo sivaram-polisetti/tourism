@@ -1,0 +1,748 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Hotel Owner Registration — SmartTour</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-a:#0ea5e9; /* sky */
+    --bg-b:#7c3aed; /* violet */
+    --accent-sky: #00e5ff;
+    --accent-orange: #ff9800;
+    --card-bg: rgba(255,255,255,0.08);
+    --glass-border: rgba(255,255,255,0.16);
+    --muted: rgba(255,255,255,0.9);
+    --radius: 16px;
+    --focus-glow: 0 10px 30px rgba(0,229,255,0.12);
+    --shadow: 0 20px 60px rgba(2,6,23,0.35);
+    color-scheme: light;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--muted);background:linear-gradient(120deg,var(--bg-a),var(--bg-b));background-size:300% 300%;animation:gradMove 18s linear infinite;}
+  @keyframes gradMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+  /* subtle animated shapes in background */
+  .bg-shapes{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .shape{
+    position:absolute;border-radius:50%;
+    filter:blur(36px);opacity:0.18;mix-blend-mode:screen;
+    transform:translate3d(0,0,0);
+    animation:floaty 10s ease-in-out infinite;
+  }
+  .shape.s1{width:420px;height:420px;background:linear-gradient(180deg,rgba(255,255,255,0.14),transparent);left:-8%;top:6%}
+  .shape.s2{width:320px;height:320px;background:linear-gradient(180deg,rgba(255,200,120,0.09),transparent);right:-6%;bottom:6%;animation-duration:14s}
+  .shape.s3{width:240px;height:240px;background:linear-gradient(180deg,rgba(0,229,255,0.07),transparent);left:20%;bottom:12%;animation-duration:12s}
+  @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-18px)}100%{transform:translateY(0)}}
+
+  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;position:relative;z-index:1}
+  .card{
+    width:100%;max-width:980px;border-radius:20px;padding:28px;background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03));backdrop-filter:blur(10px) saturate(140%);box-shadow:var(--shadow);border:1px solid var(--glass-border);position:relative;overflow:hidden;
+  }
+
+  /* language selector */
+  .lang-switch{position:absolute;top:18px;right:18px;z-index:10;display:flex;align-items:center;gap:8px}
+  .lang-btn{
+    position:relative;display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;
+    background: linear-gradient(90deg,#ffffff,#ffe0b2);
+    color:#1a1a1a;font-weight:700;border:none;cursor:pointer;
+    box-shadow:0 8px 30px rgba(2,6,23,0.12);
+    transition:transform .18s ease,box-shadow .18s ease;
+  }
+  .lang-btn:active{transform:translateY(1px)}
+  .lang-select{
+    border:none;background:transparent;font-weight:700;cursor:pointer;
+    padding:6px 8px;font-size:14px;color:#1a1a1a;outline:none;
+  }
+  .lang-select option{
+    background:#fff;color:#222;font-weight:600;
+  }
+  .lang-btn::before{
+    content:"";position:absolute;inset:-2px;border-radius:14px;
+    background:linear-gradient(90deg,var(--accent-orange),var(--accent-sky),#7e5bef);
+    opacity:0;transition:opacity .28s ease;z-index:-1;filter:blur(8px);
+  }
+  .lang-btn:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,0.16)}
+  .lang-btn:hover::before{opacity:1}
+
+  /* header */
+  .header{display:flex;align-items:center;gap:18px;margin-bottom:6px}
+  .logo{display:flex;flex-direction:column}
+  .brand{font-weight:800;font-size:20px;color:#fff;letter-spacing:-0.02em}
+  .tag{font-size:12px;color:rgba(255,255,255,0.85)}
+
+  .intro{margin-top:6px;margin-bottom:18px}
+  .title{font-size:26px;font-weight:800;color:transparent;background:linear-gradient(90deg,#fff,#ffe0b2,#00e5ff);-webkit-background-clip:text}
+  .desc{margin-top:8px;color:rgba(255,255,255,0.92);font-size:14px}
+
+  /* form layout */
+  form{display:grid;grid-template-columns:1fr;gap:14px;margin-top:18px}
+  @media(min-width:880px){form{grid-template-columns:repeat(2,1fr)}}
+  .full{grid-column:1/-1}
+  label{display:block;font-size:13px;color:rgba(255,255,255,0.95);margin-bottom:8px;font-weight:700}
+
+  input[type="text"], input[type="email"], input[type="tel"], input[type="url"], select, textarea {
+    width:100%;padding:12px 14px;border-radius:12px;
+    border:1px solid rgba(255,255,255,0.18);
+    background:#fff;color:#222;
+    outline:none;transition:box-shadow .18s ease,transform .12s ease,border-color .18s ease;
+    font-size:14px;font-weight:600;
+  }
+  textarea{min-height:110px;resize:vertical;padding-top:12px}
+  input:focus, select:focus, textarea:focus{
+    border-color:var(--accent-orange);
+    box-shadow:0 6px 26px rgba(255,152,0,0.25);
+    transform:translateY(-2px);
+  }
+  input:hover, select:hover, textarea:hover{
+    border-color:var(--accent-sky);
+  }
+
+  /* custom dropdown arrow */
+  .select-wrap{position:relative}
+  .select-wrap::after{content:"▾";position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;color:#222;opacity:0.85;pointer-events:none}
+
+  /* checkboxes */
+  .checkboxes{display:flex;flex-wrap:wrap;gap:10px}
+  .chk{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;
+    background:#fff;border:1px solid rgba(0,0,0,0.08);cursor:pointer;
+    transition:transform .14s ease,box-shadow .18s}
+  .chk input{appearance:none;width:18px;height:18px;border-radius:6px;
+    background:transparent;border:2px solid #888;display:inline-block;position:relative}
+  .chk input:checked{background:linear-gradient(90deg,var(--accent-sky),#7e5bef);
+    border-color:transparent;box-shadow:0 8px 26px rgba(0,229,255,0.12)}
+  .chk input:focus{outline:none;box-shadow:0 8px 30px rgba(0,229,255,0.1)}
+  .chk span{font-size:13px;color:#222;font-weight:600}
+
+  .hint{font-size:13px;color:rgba(255,255,255,0.8);margin-top:6px}
+
+  /* submit */
+  .actions{display:flex;gap:12px;align-items:center;justify-content:flex-end;grid-column:1/-1;margin-top:8px}
+  .btn{
+    padding:12px 18px;border-radius:12px;border:none;font-weight:800;
+    cursor:pointer;color:#042b35;
+    background:linear-gradient(90deg,#fff,#ffe0b2);
+    box-shadow:0 12px 30px rgba(0,0,0,0.12);
+    transition:transform .14s ease,box-shadow .2s ease;
+  }
+  .btn:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff}
+
+  /* selected bar */
+  .selected-bar{grid-column:1/-1;margin-top:18px;padding:14px;border-radius:12px;
+    background:linear-gradient(90deg,rgba(255,152,0,0.1),rgba(0,229,255,0.08));
+    border:1px solid rgba(255,255,255,0.16);display:none;align-items:center;justify-content:space-between}
+  .selected-bar strong{color:#fff}
+  .msg{font-size:13px;color:#fff}
+
+  .error{color:var(--accent-orange);font-size:13px;margin-top:6px;display:none}
+
+  @media(max-width:520px){
+    .title{font-size:20px}
+    .card{padding:18px;border-radius:14px}
+    .lang-btn{padding:6px 10px}
+    form{gap:12px}
+  }
+</style>
+
+</head>
+<body>
+  <div class="bg-shapes" aria-hidden="true">
+    <div class="shape s1"></div>
+    <div class="shape s2"></div>
+    <div class="shape s3"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="card" role="main" aria-labelledby="page-title">
+      <!-- Language Switcher -->
+      <div class="lang-switch" aria-hidden="false">
+        <button class="lang-btn" aria-label="Choose language">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="opacity:.9"><path d="M12 2v20M2 12h20" stroke="#062b3b" stroke-width="1.2" stroke-linecap="round"></path></svg>
+          <select id="lang" class="lang-select" aria-label="Language selector">
+            <option value="en" selected>English</option>
+            <option value="hi">हिन्दी</option>
+            <option value="te">తెలుగు</option>
+            <option value="ta">தமிழ்</option>
+            <option value="kn">ಕನ್ನಡ</option>
+            <option value="ml">മലയാളം</option>
+          </select>
+        </button>
+      </div>
+
+      <!-- Header -->
+      <div class="header">
+        <div class="logo">
+          <div class="brand" id="brandText">SmartTour</div>
+          <div class="tag" id="tagText">Hotel Owner Registration</div>
+        </div>
+      </div>
+
+      <div class="intro">
+        <div class="title" id="page-title">Register Your Hotel</div>
+        <div class="desc" id="page-desc">Fill simple details so travellers can discover your hotel — available in multiple languages.</div>
+      </div>
+
+      <!-- Form -->
+      <form id="hotelForm" novalidate>
+        <div class="full">
+          <label for="hotelName" id="label-hotelName">Hotel Name</label>
+          <input id="hotelName" name="hotelName" type="text" placeholder="e.g., Grand Ocean Resort" required />
+          <div class="error" id="err-hotelName"></div>
+        </div>
+
+        <div>
+          <label for="hotelLocation" id="label-hotelLocation">Hotel Location</label>
+          <input id="hotelLocation" name="hotelLocation" type="text" placeholder="City, Area (e.g., M.G. Road, Bangalore)" required />
+          <div class="error" id="err-hotelLocation"></div>
+        </div>
+
+        <div>
+          <label for="nearby" id="label-nearby">Famous Nearby Places</label>
+          <input id="nearby" name="nearby" type="text" placeholder="Comma-separated (e.g., Beach, Temple, Mall)" />
+          <div class="hint" id="hint-nearby">Mention up to 3 prominent nearby attractions to help travellers.</div>
+        </div>
+
+        <div>
+          <label for="hotelType" id="label-hotelType">Type of Hotel</label>
+          <div class="select-wrap">
+            <select id="hotelType" name="hotelType" required>
+              <option value="" disabled selected>Choose type</option>
+              <option value="2-star">2 Star</option>
+              <option value="3-star">3 Star</option>
+              <option value="5-star">5 Star</option>
+              <option value="luxury">Luxury</option>
+              <option value="budget">Budget</option>
+            </select>
+          </div>
+          <div class="error" id="err-hotelType"></div>
+        </div>
+
+        <div>
+          <label id="label-aspects">Main aspects that attract travellers</label>
+          <div class="checkboxes" role="group" aria-labelledby="label-aspects">
+            <label class="chk"><input type="checkbox" name="aspects" value="food"><span>Food</span></label>
+            <label class="chk"><input type="checkbox" name="aspects" value="ambience"><span>Ambience</span></label>
+            <label class="chk"><input type="checkbox" name="aspects" value="view"><span>View</span></label>
+            <label class="chk"><input type="checkbox" name="aspects" value="safety"><span>Safety</span></label>
+            <label class="chk"><input type="checkbox" name="aspects" value="price"><span>Price</span></label>
+            <label class="chk"><input type="checkbox" name="aspects" value="connectivity"><span>Connectivity</span></label>
+            <label class="chk"><input type="checkbox" name="aspects" value="events"><span>Events</span></label>
+            <label class="chk"><input type="checkbox" name="aspects" value="family"><span>Family-friendly</span></label>
+          </div>
+        </div>
+
+        <div>
+          <label for="email" id="label-email">Hotel Email</label>
+          <input id="email" name="email" type="email" placeholder="you@hotel.com" required />
+          <div class="error" id="err-email"></div>
+        </div>
+
+        <div>
+          <label for="phone" id="label-phone">Phone Number</label>
+          <input id="phone" name="phone" type="tel" placeholder="+91 98765 43210" required />
+          <div class="error" id="err-phone"></div>
+        </div>
+
+        <div class="full">
+          <label for="website" id="label-website">Website / Booking Link (optional)</label>
+          <input id="website" name="website" type="url" placeholder="https://example.com/booking" />
+        </div>
+
+        <div class="full">
+          <label for="notes" id="label-notes">Additional Notes / Special Features</label>
+          <textarea id="notes" name="notes" placeholder="e.g., Complimentary breakfast, pet friendly, rooftop pool"></textarea>
+        </div>
+
+        <div class="selected-bar" id="selectedBar" aria-live="polite">
+          <div>
+            <strong id="selectedSummary">Selected: —</strong>
+            <div class="msg" id="selectedMsg">When you submit, we'll review and publish your hotel profile.</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button type="button" class="btn secondary" id="editBtn">Edit</button>
+            <button type="submit" class="btn" id="submitBtn">Submit</button>
+          </div>
+        </div>
+
+        <div class="actions full">
+          <button type="button" class="btn secondary" id="previewBtn">Preview</button>
+          <button type="button" class="btn" id="openBarBtn">Ready to Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+/* ========= TRANSLATIONS (all text used on page) ========= */
+const translations = {
+  en:{
+    brand:"SmartTour",
+    tag:"Hotel Owner Registration",
+    title:"Register Your Hotel",
+    desc:"Fill simple details so travellers can discover your hotel — available in multiple languages.",
+    labels:{
+      hotelName:"Hotel Name",
+      hotelLocation:"Hotel Location",
+      nearby:"Famous Nearby Places",
+      hotelType:"Type of Hotel",
+      aspects:"Main aspects that attract travellers",
+      email:"Hotel Email",
+      phone:"Phone Number",
+      website:"Website / Booking Link (optional)",
+      notes:"Additional Notes / Special Features",
+      chooseType:"Choose type",
+      typeOptions:["2 Star","3 Star","5 Star","Luxury","Budget"],
+      aspectsOptions:["Food","Ambience","View","Safety","Price","Connectivity","Events","Family-friendly"],
+      hintNearby:"Mention up to 3 prominent nearby attractions to help travellers.",
+      ready:"Ready to Submit",
+      preview:"Preview",
+      edit:"Edit",
+      submit:"Submit",
+      selectedPrefix:"Selected",
+      selectedMsg:"When you submit, we'll review and publish your hotel profile.",
+      success:"Your hotel registration was submitted successfully!",
+      validation:{
+        required:"This field is required.",
+        invalidEmail:"Please enter a valid email.",
+        invalidPhone:"Please enter a valid phone number (min 7 digits).",
+        chooseType:"Please choose a hotel type."
+      }
+    }
+  },
+  hi:{
+    brand:"SmartTour",
+    tag:"होटल मालिक पंजीकरण",
+    title:"अपना होटल पंजीकृत करें",
+    desc:"साधारण विवरण भरें ताकि यात्रियों को आपका होटल मिल सके — कई भाषाओं में उपलब्ध।",
+    labels:{
+      hotelName:"होटल का नाम",
+      hotelLocation:"होटल स्थान",
+      nearby:"पास के प्रसिद्ध स्थान",
+      hotelType:"होटल का प्रकार",
+      aspects:"प्रमुख पहलू जो यात्रियों को आकर्षित करते हैं",
+      email:"होटल ईमेल",
+      phone:"फोन नंबर",
+      website:"वेबसाइट / बुकिंग लिंक (वैकल्पिक)",
+      notes:"अतिरिक्त जानकारी / विशेषताएँ",
+      chooseType:"प्रकार चुनें",
+      typeOptions:["2 स्टार","3 स्टार","5 स्टार","लक्सरी","बजट"],
+      aspectsOptions:["भोजन","वातावरण","दृष्टि","सुरक्षा","मूल्य","कनेक्टिविटी","इवेंट्स","परिवार-अनुकूल"],
+      hintNearby:"यात्रियों की मदद के लिए 3 प्रमुख आकर्षण का उल्लेख करें।",
+      ready:"सबमिट करने के लिए तैयार",
+      preview:"पूर्वावलोकन",
+      edit:"संपादित करें",
+      submit:"सबमिट",
+      selectedPrefix:"चयनित",
+      selectedMsg:"सबमिट करने पर हम समीक्षा करेंगे और आपका प्रोफ़ाइल प्रकाशित करेंगे।",
+      success:"आपका होटल पंजीकरण सफलतापूर्वक सबमिट हुआ!",
+      validation:{
+        required:"यह फ़ील्ड आवश्यक है।",
+        invalidEmail:"कृपया वैध ईमेल दर्ज करें।",
+        invalidPhone:"कृपया वैध फोन नंबर दर्ज करें (कम से कम 7 अंक)।",
+        chooseType:"कृपया होटल प्रकार चुनें।"
+      }
+    }
+  },
+  te:{
+    brand:"SmartTour",
+    tag:"హోటల్ యజమాని నమోదు",
+    title:"మీ హోటల్‌ని నమోదుచేయండి",
+    desc:"సరళమైన వివరాలు నింపండి, ప్రయాణీకులు మీ హోటల్‌ను కనుగొనగలుగుతారు — బహుభాషలకు అందుబాటులో ఉంది.",
+    labels:{
+      hotelName:"హోటలின் పేరు",
+      hotelLocation:"హోటల్ ప్రాంతం",
+      nearby:"పరిసరంలోని ప్రసిద్ధ ప్రదేశాలు",
+      hotelType:"హోటల్ రకం",
+      aspects:"ప్రధాన అంశాలు travelerలను ఆకర్షించేవి",
+      email:"హోటల్ ఇమెయిల్",
+      phone:"ఫోన్ నంబర్",
+      website:"వెబ్‌సైట్ / బుకింగ్ లింక్ (ఐచ్ఛికం)",
+      notes:"అదనపు వివరాలు / ప్రత్యేక సౌకర్యాలు",
+      chooseType:"రకాన్ని ఎంచుకోండి",
+      typeOptions:["2 స్టార్","3 స్టార్","5 స్టార్","లగ్జరీ","బడ్జెట్"],
+      aspectsOptions:["ఆహారం","వాతావరణం","దర్శనం","భద్రత","ధర","కనెక్టివిటీ","ఈవెంట్స్","కుటుంబ అనుకూలం"],
+      hintNearby:"యాత్రికులకు సహాయంగా 3 ప్రధాన ఆకర్షణలను పేర్కొనండి.",
+      ready:"సమర్పించడానికి సిద్ధం",
+      preview:"ప్రివ్యూ",
+      edit:"సవరించు",
+      submit:"సమర్పించు",
+      selectedPrefix:"ఎంచుకున్నది",
+      selectedMsg:"మీరు సమర్పించిన తర్వాత, మేము సమీక్షించి మీ హోటల్ ప్రొఫైల్‌ను ప్రచురిస్తాము.",
+      success:"మీ హోటల్ రిజిస్ట్రేషన్ విజయవంతంగా సమర్పించబడింది!",
+      validation:{
+        required:"ఈ ఫీల్డ్ అవసరం.",
+        invalidEmail:"దయచేసి అందుచేసే ఇమెయిల్ ఎంటర్ చేయండి.",
+        invalidPhone:"దయచేసి సరైన ఫోన్ నంబర్ నమోదు చేయండి ( కనీసం 7 అంకెలు ).",
+        chooseType:"దయచేసి హోటల్ రకాన్ని ఎంచుకోండి."
+      }
+    }
+  },
+  ta:{
+    brand:"SmartTour",
+    tag:"ஹோட்டல் உரிமையாளர் பதிவு",
+    title:"உங்கள் ஹோட்டலை பதிவு செய்யுங்கள்",
+    desc:"சுலபமான விவரங்களை நிரப்புக — பயணிகள் உங்கள் ஹோட்டலை கண்டுபிடிக்க முடியும். பல மொழிகளில் கிடைக்கிறது.",
+    labels:{
+      hotelName:"ஹோட்டல் பெயர்",
+      hotelLocation:"ஹோட்டல் இடம்",
+      nearby:"பக்கத்தில் உள்ள பிரபல இடங்கள்",
+      hotelType:"ஹோட்டல் வகை",
+      aspects:"பயணிகளை கவரும் முக்கிய அம்சங்கள்",
+      email:"ஹோட்டல் மின்னஞ்சல்",
+      phone:"தொலைபேசி எண்",
+      website:"இணையதளம் / முன்பதிவு இணைப்புகள் (ஐச்சיקம்)",
+      notes:"கூடுதல் குறிப்புகள் / சிறப்பு அம்சங்கள்",
+      chooseType:"வகையை தேர்வு செய்க",
+      typeOptions:["2 நட்சத்திரம்","3 நட்சத்திரம்","5 நட்சத்திரம்","கலைஞர்","பட்ஜெட்"],
+      aspectsOptions:["உணவு","வசதி","காட்சி","பாதுகாப்பு","விலை","இணைப்பு","நிகழ்ச்சிகள்","குடும்ப நட்பு"],
+      hintNearby:"பயணிகளுக்கு உதவ 3 முக்கிய நிலைகளை குறிப்பிடவும்.",
+      ready:"சமர்ப்பத்திற்கு தயாராக 있음",
+      preview:"முன்னோட்டம்",
+      edit:"தொகுப்பு",
+      submit:"சமர்ப்பி",
+      selectedPrefix:"தேர்ந்தெடுக்கப்பட்டது",
+      selectedMsg:"சமர்ப்பிக்கப்பட்டவுடன், நாங்கள் பரிசீலித்து உங்கள் ஹோட்டல் சுயவிவரத்தை வெளியிடுவோம்.",
+      success:"உங்கள் ஹோட்டல் பதிவு வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது!",
+      validation:{
+        required:"இந்த புலம் தேவை.",
+        invalidEmail:"தயவுசெய்து செல்லுபடியான மின்னஞ்சலை உள்ளிடவும்.",
+        invalidPhone:"குறைந்தது 7 இலக்கங்கள் உள்ள செல்லுபடியான தொலைபேசி எண்ணை உள்ளிடவும்.",
+        chooseType:"தயவுசெய்து ஹோட்டல் வகையை தேர்வு செய்யுங்கள்."
+      }
+    }
+  },
+  kn:{
+    brand:"SmartTour",
+    tag:"ಹೋಟೆಲ್ ಮಾಲೀಕೆನೇ ನೋಂದಣಿ",
+    title:"ನಿಮ್ಮ ಹೋಟೆಲ್ ನೋಂದಣಿ ಮಾಡಿ",
+    desc:"ಸರಳ ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ — ಪ್ರಯಾಣಿಕರು ನಿಮ್ಮ ಹೋಟೆಲ್ ಅನ್ನು ಕಂಡುಹಿಡಿಯಬಹುದು — ಬಹುಭಾಷೆಗಳಲ್ಲಿ ಲಭ್ಯವಿದೆ.",
+    labels:{
+      hotelName:"ಹೋಟೆಲ್ ಹೆಸರು",
+      hotelLocation:"ಹೋಟೆಲ್ ಸ್ಥಳ",
+      nearby:"ಸುದ್ದಿಪಟ್ಟ ಪ್ರಸಿದ್ಧ ಸ್ಥಳಗಳು",
+      hotelType:"ಹೋಟೆಲ್ ಪ್ರಕಾರ",
+      aspects:"ಪ್ರವಾಸಿಗಳನ್ನು ಆಕರ್ಷಿಸುವ ಪ್ರಮುಖಾಂಶಗಳು",
+      email:"ಹೋಟೆಲ್ ಇಮೇಲ್",
+      phone:"ದೂರವಾಣಿ ಸಂಖ್ಯೆ",
+      website:"ವೆಬ್‌ಸೈಟ್ / ಬುಕಿಂಗ್ ಲಿಂಕ್ (ಐಚ್ಛಿಕ)",
+      notes:"ಹೆಚ್ಚಿನ ಸೂಚನೆಗಳು / ವಿಶೇಷ ವೈಶಿಷ್ಟ್ಯಗಳು",
+      chooseType:"ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+      typeOptions:["2 ಸ್ಟಾರ್","3 ಸ್ಟಾರ್","5 ಸ್ಟಾರ್","ಡಿಲಕ್ಸ್","ಬಜೆಟ್"],
+      aspectsOptions:["ಆಹಾರ","ವಾತಾವರಣ","ದೃಶ್ಯ","ಸುರಕ್ಷತೆ","ಬೆಲೆ","ಕನಕ್ಟಿವಿಟಿ","ಈವೆಂಟ್ಸ್","ಕುಟುಂಬ ಗಾಳಿಕ"],
+      hintNearby:"ಪ್ರಯಾಣಿಕರಿಗೆ ಸಹಾಯ ಮಾಡಲು 3 ಪ್ರಮುಖ ಆಕರ್ಷಣೆಗಳನ್ನು ಉಲ್ಲೇಖಿಸಿ.",
+      ready:"ಸಲ್ಲಿಸುವಿಗೆ ಸಿದ್ಧವಾಗಿದೆ",
+      preview:"ಮುನ್ಸ_PAY",
+      edit:"ಸಂಶೋಧನೆ",
+      submit:"ಸಲ್ಲಿಸು",
+      selectedPrefix:"ಆಯ್ದದ್ದು",
+      selectedMsg:"ನೀವು ಸಲ್ಲಿಸಿದ ನಂತರ, ನಾವು ಪರಿಶೀಲಿಸಿ ನಿಮ್ಮ ಹೋಟೆಲ್ ಪ್ರೊಫೈಲ್ ಅನ್ನು ಪ್ರಕಟಿಸೋಣ.",
+      success:"ನಿಮ್ಮ ಹೋಟೆಲ್ ನೋಂದಣಿ ಯಶಸ್ವಿಯಾಗಿ ಸಲ್ಲಿತವಾಗಿದೆ!",
+      validation:{
+        required:"ಈ ಕ್ಷೇತ್ರ ಅಗತ್ಯವಿದೆ.",
+        invalidEmail:"ದಯವಿಟ್ಟು ಮಾನ್ಯವಾದ ಇಮೇಲ್ ನಮೂದಿಸಿ.",
+        invalidPhone:"ದಯವಿಟ್ಟು ಮಾನ್ಯ ದೂರವಾಣಿ ಸಂಖ್ಯೆ ನಮೂದಿಸಿ (ಕನಿಷ್ಠ 7 ಅಂಕೆಗಳು).",
+        chooseType:"ದಯವಿಟ್ಟು ಹೋಟೆಲ್ ಪ್ರಕಾರವನ್ನು ಆಯ್ಕೆಮಾಡಿ."
+      }
+    }
+  },
+  ml:{
+    brand:"SmartTour",
+    tag:"ഹോട്ടൽ ഉടമാ രജിസ്ട്രേഷൻ",
+    title:"നിങ്ങളുടെ ഹോട്ടൽ രജിസ്റ്റർ ചെയ്യുക",
+    desc:"സൗകര്യപ്രദമായ വിവരങ്ങൾ പൂരിപ്പിക്കുക — യാത്രക്കാർ നിങ്ങളുടെ ഹോട്ടൽ കണ്ടെത്താൻ കഴിയും — ബഹുഭാഷകളിൽ ലഭ്യമാണ്.",
+    labels:{
+      hotelName:"ഹോട്ടൽ പേര്",
+      hotelLocation:"ഹോട്ടൽ ലൊക്കേഷന്‍",
+      nearby:"സമീപത്തിലുള്ള പ്രശസ്ത ഇടങ്ങൾ",
+      hotelType:"ഹോട്ടൽ തരം",
+      aspects:"തുറക്കുന്ന പ്രധാന സവിശേഷതകൾ",
+      email:"ഹോട്ടൽ ഇമെയിൽ",
+      phone:"ഫോൺ നമ്പർ",
+      website:"വെബ്സൈറ്റ് / ബുക്കിംഗ് ലിങ്ക് (ഐച്ഛികം)",
+      notes:"കൂടുതൽ കുറിപ്പുകൾ / പ്രത്യേക സവിശേഷതകൾ",
+      chooseType:"തരം തിരഞ്ഞെടുക്കുക",
+      typeOptions:["2 സ്റ്റാർ","3 സ്റ്റാർ","5 സ്റ്റാർ","ലഗ്ജറി","ബജറ്റ്"],
+      aspectsOptions:["ഭക്ഷണം","മാന്യത","കാഴ്‌ച","സുരക്ഷ","വില","കണക്റ്റിവിറ്റി","ഇവന്റുകൾ","കുടുംബ സൗഹൃദം"],
+      hintNearby:"യാത്രക്കാർക്ക് സഹായിക്കാൻ 3 പ്രധാന ആകർഷണങ്ങൾ സൂചിപ്പിക്കുക.",
+      ready:"സമർപ്പിക്കാൻ തയ്യാറാണ്",
+      preview:"പ്രിവ്യൂ",
+      edit:"എഡിറ്റ്",
+      submit:"സമർപ്പിക്കുക",
+      selectedPrefix:"തിരഞ്ഞെടുത്തത്",
+      selectedMsg:"സമർപ്പിച്ചാൽ, ഞങ്ങൾ പരിശോധിച്ച് നിങ്ങളുടെ ഹോട്ടൽ പ്രൊഫൈൽ പ്രസിദ്ധീകരിക്കും.",
+      success:"നിങ്ങളുടെ ഹോട്ടൽ രജിസ്ട്രേഷൻ വിജയകരമായി സമർപ്പിച്ചു!",
+      validation:{
+        required:"ഈ ഫീൽഡ് ആവശ്യമാണ്.",
+        invalidEmail:"സാധുവായ ഇമെയിൽ നൽകുക.",
+        invalidPhone:"ന്യുനതമാക്കി 7 അക്കങ്ങളുള്ള ഒരു സാധുവായ ഫോൺ നമ്പർ നൽകുക.",
+        chooseType:"ദയവായി ഹോട്ടൽ തരം തിരഞ്ഞെടുക്കുക."
+      }
+    }
+  }
+};
+
+/* ========= DOM refs ========= */
+const langSelect = document.getElementById('lang');
+const brandText = document.getElementById('brandText');
+const tagText = document.getElementById('tagText');
+const pageTitle = document.getElementById('page-title');
+const pageDesc = document.getElementById('page-desc');
+
+const labels = {
+  hotelName: document.getElementById('label-hotelName'),
+  hotelLocation: document.getElementById('label-hotelLocation'),
+  nearby: document.getElementById('label-nearby'),
+  hotelType: document.getElementById('label-hotelType'),
+  aspects: document.getElementById('label-aspects'),
+  email: document.getElementById('label-email'),
+  phone: document.getElementById('label-phone'),
+  website: document.getElementById('label-website'),
+  notes: document.getElementById('label-notes')
+};
+
+const inputs = {
+  hotelName: document.getElementById('hotelName'),
+  hotelLocation: document.getElementById('hotelLocation'),
+  nearby: document.getElementById('nearby'),
+  hotelType: document.getElementById('hotelType'),
+  email: document.getElementById('email'),
+  phone: document.getElementById('phone'),
+  website: document.getElementById('website'),
+  notes: document.getElementById('notes')
+};
+
+const hintNearby = document.getElementById('hint-nearby');
+
+const aspectsLabels = Array.from(document.querySelectorAll('.chk span'));
+const aspectsInputs = Array.from(document.querySelectorAll('.chk input'));
+
+const selectedBar = document.getElementById('selectedBar');
+const selectedSummary = document.getElementById('selectedSummary');
+const selectedMsg = document.getElementById('selectedMsg');
+const openBarBtn = document.getElementById('openBarBtn');
+const previewBtn = document.getElementById('previewBtn');
+const editBtn = document.getElementById('editBtn');
+const submitBtn = document.getElementById('submitBtn');
+const hotelForm = document.getElementById('hotelForm');
+
+/* error containers */
+const errors = {
+  hotelName: document.getElementById('err-hotelName'),
+  hotelLocation: document.getElementById('err-hotelLocation'),
+  hotelType: document.getElementById('err-hotelType'),
+  email: document.getElementById('err-email'),
+  phone: document.getElementById('err-phone')
+};
+
+/* current language */
+let currentLang = 'en';
+
+/* ========= update UI language ========= */
+function applyLanguage(lang){
+  const t = translations[lang];
+  if(!t) return;
+  currentLang = lang;
+
+  brandText.textContent = t.brand;
+  tagText.textContent = t.tag;
+  pageTitle.textContent = t.title;
+  pageDesc.textContent = t.desc;
+
+  labels.hotelName.textContent = t.labels.hotelName;
+  labels.hotelLocation.textContent = t.labels.hotelLocation;
+  labels.nearby.textContent = t.labels.nearby;
+  labels.hotelType.textContent = t.labels.hotelType;
+  labels.aspects.textContent = t.labels.aspects;
+  labels.email.textContent = t.labels.email;
+  labels.phone.textContent = t.labels.phone;
+  labels.website.textContent = t.labels.website;
+  labels.notes.textContent = t.labels.notes;
+  hintNearby.textContent = t.labels.hintNearby;
+
+  // placeholders (do not overwrite user input)
+  inputs.hotelName.placeholder = t.labels.hotelName + ' — e.g., Grand Ocean Resort';
+  inputs.hotelLocation.placeholder = t.labels.hotelLocation + ' — City, Area';
+  inputs.nearby.placeholder = t.labels.nearby + ' — ' + (Array.isArray(t.labels.typeOptions)?t.labels.typeOptions.join(', '):'');
+  inputs.email.placeholder = 'you@hotel.com';
+  inputs.phone.placeholder = '+91 98765 43210';
+  inputs.website.placeholder = t.labels.website;
+
+  // hotel type options (replace options while preserving selected value)
+  const prevType = inputs.hotelType.value;
+  inputs.hotelType.innerHTML = '';
+  const defaultOpt = document.createElement('option');
+  defaultOpt.disabled = true; defaultOpt.selected = true; defaultOpt.value = '';
+  defaultOpt.textContent = t.labels.chooseType || 'Choose type';
+  inputs.hotelType.appendChild(defaultOpt);
+  t.labels.typeOptions.forEach(opt => {
+    const o = document.createElement('option'); o.value = opt; o.textContent = opt; inputs.hotelType.appendChild(o);
+  });
+  if([...inputs.hotelType.options].some(o=>o.value===prevType)) inputs.hotelType.value = prevType;
+
+  // aspects labels (checkbox labels)
+  const aspectsText = t.labels.aspectsOptions;
+  aspectsLabels.forEach((span, idx) => {
+    span.textContent = aspectsText && aspectsText[idx] ? aspectsText[idx] : span.textContent;
+  });
+
+  // buttons & small labels
+  openBarBtn.textContent = t.labels.ready;
+  previewBtn.textContent = t.labels.preview;
+  editBtn.textContent = t.labels.edit;
+  submitBtn.textContent = t.labels.submit;
+  selectedMsg.textContent = t.labels.selectedMsg;
+  selectedSummary.textContent = `${t.labels.selectedPrefix}: —`;
+
+  // validation messages are in translations object (used during validate)
+}
+
+/* ========= Validation ========= */
+function validate(){
+  const t = translations[currentLang].labels;
+  let ok = true;
+
+  /* hotelName */
+  if(!inputs.hotelName.value.trim()){
+    errors.hotelName.textContent = t.validation.required;
+    errors.hotelName.style.display = 'block';
+    ok = false;
+  } else { errors.hotelName.style.display = 'none' }
+
+  /* hotelLocation */
+  if(!inputs.hotelLocation.value.trim()){
+    errors.hotelLocation.textContent = t.validation.required;
+    errors.hotelLocation.style.display = 'block';
+    ok = false;
+  } else { errors.hotelLocation.style.display = 'none' }
+
+  /* hotelType */
+  if(!inputs.hotelType.value){
+    errors.hotelType.textContent = t.validation.chooseType;
+    errors.hotelType.style.display = 'block';
+    ok = false;
+  } else { errors.hotelType.style.display = 'none' }
+
+  /* email */
+  const emailVal = inputs.email.value.trim();
+  if(!emailVal){
+    errors.email.textContent = t.validation.required;
+    errors.email.style.display = 'block';
+    ok = false;
+  } else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)){
+    errors.email.textContent = t.validation.invalidEmail;
+    errors.email.style.display = 'block';
+    ok = false;
+  } else { errors.email.style.display = 'none' }
+
+  /* phone */
+  const phoneVal = inputs.phone.value.replace(/\s+/g,'').replace(/[-()]/g,'');
+  if(!phoneVal){
+    errors.phone.textContent = t.validation.required;
+    errors.phone.style.display = 'block';
+    ok = false;
+  } else if(!/^\+?\d{7,15}$/.test(phoneVal)){
+    errors.phone.textContent = t.validation.invalidPhone;
+    errors.phone.style.display = 'block';
+    ok = false;
+  } else { errors.phone.style.display = 'none' }
+
+  return ok;
+}
+
+/* ========= show selected summary ========= */
+function openSelectedBar(){
+  const t = translations[currentLang].labels;
+  // summarize selected fields
+  const name = inputs.hotelName.value.trim() || '—';
+  const type = inputs.hotelType.value || '—';
+  const loc = inputs.hotelLocation.value.trim() || '—';
+  selectedSummary.textContent = `${t.selectedPrefix}: ${name} (${type}) — ${loc}`;
+  selectedMsg.textContent = t.selectedMsg;
+  selectedBar.style.display = 'flex';
+  selectedBar.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+/* ========= event listeners ========= */
+langSelect.addEventListener('change', (e)=> applyLanguage(e.target.value) );
+
+/* open selected bar button */
+openBarBtn.addEventListener('click', ()=>{
+  // run validation lightly before showing bar
+  if(!inputs.hotelName.value && !inputs.hotelLocation.value && !inputs.hotelType.value){
+    // if nothing filled, just show bar with placeholders
+    openSelectedBar();
+  } else {
+    // partial validation
+    openSelectedBar();
+  }
+});
+
+/* preview: simply show current values in alert (localized) */
+previewBtn.addEventListener('click', ()=>{
+  const t = translations[currentLang].labels;
+  const aspectsSel = aspectsInputs.filter(i=>i.checked).map(i=> i.nextElementSibling.textContent).join(', ') || '—';
+  const summary = [
+    `${t.hotelName}: ${inputs.hotelName.value || '—'}`,
+    `${t.hotelLocation}: ${inputs.hotelLocation.value || '—'}`,
+    `${t.hotelsNearby || t.nearby}: ${inputs.nearby.value || '—'}`,
+    `${t.hotelType}: ${inputs.hotelType.value || '—'}`,
+    `${t.aspects}: ${aspectsSel}`,
+    `${t.email}: ${inputs.email.value || '—'}`,
+    `${t.phone}: ${inputs.phone.value || '—'}`,
+    `${t.website}: ${inputs.website.value || '—'}`
+  ].join('\n');
+  // usable for debugging or quick preview
+  alert(summary);
+});
+
+/* Edit: hide bar and focus first */
+editBtn.addEventListener('click', ()=>{
+  selectedBar.style.display = 'none';
+  inputs.hotelName.focus();
+});
+
+/* Form submit handling */
+hotelForm.addEventListener('submit', (ev)=>{
+  ev.preventDefault();
+  const ok = validate();
+  if(!ok) return;
+  // collect form data
+  const data = {
+    hotelName: inputs.hotelName.value.trim(),
+    location: inputs.hotelLocation.value.trim(),
+    nearby: inputs.nearby.value.trim(),
+    hotelType: inputs.hotelType.value,
+    aspects: aspectsInputs.filter(i=>i.checked).map(i=>i.value),
+    email: inputs.email.value.trim(),
+    phone: inputs.phone.value.trim(),
+    website: inputs.website.value.trim(),
+    notes: inputs.notes.value.trim(),
+    lang: currentLang,
+    submittedAt: new Date().toISOString()
+  };
+  // Demo: show success message localized
+  const successMsg = translations[currentLang].labels.success || 'Submitted!';
+  // Hide form actions and show selected bar with success
+  selectedBar.style.display = 'flex';
+  selectedSummary.textContent = successMsg;
+  selectedMsg.textContent = JSON.stringify(data, null, 2).slice(0,400) + (JSON.stringify(data).length>400 ? '...' : '');
+  // In real app: send `data` to server via fetch/ajax here
+  console.log("FORM SUBMITTED (simulate):", data);
+});
+
+/* initialize default language */
+applyLanguage('en');
+
+/* accessibility: keyboard "Enter" on openBarBtn */
+openBarBtn.addEventListener('keydown', (e)=>{ if(e.key==='Enter') openBarBtn.click(); });
+
+/* small: preserve chosen hotelType across language switches by mapping label -> value if needed */
+/* Note: our hotelType values are the displayed strings (translated). For robust multi-lingual backing IDs, you'd use separate internal values. */
+
+</script>
+</body>
+</html>
+

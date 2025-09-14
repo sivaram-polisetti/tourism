@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Get Started — Register</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;color:#0f172a;overflow-x:hidden;}
+
+    @keyframes gradientBG {
+      0%{background:linear-gradient(135deg, var(--bg1), var(--bg2))}
+      50%{background:linear-gradient(135deg, var(--bg2), var(--bg3))}
+      100%{background:linear-gradient(135deg, var(--bg1), var(--bg2))}
+    }
+    .page{
+      min-height:1vh;
+min-width:100%;
+      display:grid;
+      place-items:center;
+      padding:48px;
+      animation: gradientBG 2s ease infinite;
+      position:relative;
+      overflow:hidden;
+    }
+    .orb{
+      position:absolute;
+      border-radius:50%;
+      filter:blur(50px);
+      opacity:0.55;
+      transform:translate3d(0,0,0);
+      animation: orbMove 30s ease-in-out infinite alternate;
+    }
+    @keyframes orbMove{
+      0%{transform:translate(0,0)}
+      50%{transform:translate(20px,30px)}
+      100%{transform:translate(0,0)}
+    }
+    .orb.one{width:420px;height:420px;left:-80px;top:-120px;background:radial-gradient(circle at 30% 30%,#ffecd2,#ffd6a5);}
+    .orb.two{width:360px;height:360px;right:-100px;bottom:-120px;background:radial-gradient(circle at 70% 70%,#dbeafe,#c7f9ff);}
+    .orb.three{width:220px;height:220px;left:50%;top:10%;transform:translateX(-40%);background:radial-gradient(circle at 60% 40%,#fde8ff,#e9f7ff);}
+
+    .card{
+      width:100%;
+      max-width:920px;
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(12px);
+      border-radius:20px;
+      padding:36px;
+      box-shadow:0 10px 30px rgba(16,24,40,0.08);
+      display:grid;
+      grid-template-columns:1fr 420px;
+      gap:28px;
+      align-items:center;
+      position:relative;
+      z-index:2;
+      transition: transform 0.4s ease, box-shadow 0.4s ease;
+    }
+    .card:hover{
+      transform: translateY(-4px);
+      box-shadow:0 20px 50px rgba(16,24,40,0.12);
+    }
+    .hero{padding:12px}
+    .kicker{
+      display:inline-block;padding:6px 12px;
+      border-radius:999px;
+      background:linear-gradient(90deg,#eef2ff,#fff0f6);
+      color:var(--accent);
+      font-weight:600;
+      margin-bottom:12px
+    }
+    h1{margin:0;font-size:32px;line-height:1.05}
+    p.lead{color:var(--muted);margin-top:12px;font-size:15px}
+    .lang-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+    .chip{
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:600;
+      cursor:pointer;
+      transition: transform .22s ease, color .22s ease, text-shadow .22s ease;
+      background:transparent;
+      border:none;
+      color:#0f172a;
+    }
+    .chip:hover{transform:translateY(-4px);text-shadow:0 4px 10px rgba(108,92,231,0.3);}
+    .chip.active{color:var(--accent);text-shadow:0 6px 20px rgba(108,92,231,0.3);}
+    form{display:flex;flex-direction:column;gap:14px}
+    .input{
+      background:var(--input);
+      border-radius:12px;
+      padding:12px 14px;
+      border:1px solid transparent;
+      outline:none;
+      font-weight:600;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .input:focus{
+      box-shadow:0 8px 20px rgba(99,102,241,0.08);
+      transform:translateY(-2px);
+      border-color:rgba(99,102,241,0.16);
+    }
+    .select-wrap{position:relative}
+    .select{
+      appearance:none;
+      width:100%;
+      padding:12px 40px 12px 14px;
+      border-radius:12px;
+      border:1px solid transparent;
+      background:linear-gradient(180deg,var(--glass),rgba(255,255,255,0.95));
+      font-weight:700;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .select:focus{outline:none; transform:translateY(-2px); box-shadow:0 8px 20px rgba(99,102,241,0.08);}
+    .select-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none}
+    .rainbow{position:absolute;left:0;bottom:0;height:4px;border-radius:999px;width:0;transition:width .5s ease, background .5s ease}
+    .submit{
+      border:0;padding:14px 18px;border-radius:12px;font-weight:800;
+      cursor:pointer;letter-spacing:0.6px;background:linear-gradient(90deg,#6c5ce7,#4f46e5);
+      color:#fff;box-shadow:0 8px 26px rgba(79,70,229,0.18);
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .submit:hover{
+      transform:translateY(-4px) scale(1.02);
+      box-shadow:0 20px 50px rgba(108,92,231,0.4);
+      animation: pulse 1.2s infinite;
+    }
+    .submit:active{transform:translateY(-2px)}
+    @keyframes pulse{
+      0%{box-shadow:0 20px 50px rgba(108,92,231,0.4)}
+      50%{box-shadow:0 25px 60px rgba(108,92,231,0.5)}
+      100%{box-shadow:0 20px 50px rgba(108,92,231,0.4)}
+    }
+    .foot{font-size:13px;color:var(--muted);margin-top:8px}
+    .panel{
+      padding:20px;
+      border-radius:12px;
+      background:linear-gradient(180deg,rgba(99,102,241,0.06),rgba(79,70,229,0.03));
+      display:flex;flex-direction:column;gap:12px;
+      align-items:center;
+      justify-content:center;
+      min-height:320px;
+    }
+    .device{
+      width:220px;height:360px;border-radius:18px;
+      background:linear-gradient(180deg,#ffffff,#f8fbff);
+      box-shadow:0 16px 40px rgba(16,24,40,0.06);
+      display:flex;flex-direction:column;align-items:center;padding:18px;position:relative;
+      transition: transform .3s ease;
+    }
+    .device:hover{transform:translateY(-4px) scale(1.02);}
+    .device-screen{
+      flex:1;width:100%;
+      background:linear-gradient(180deg,#f8fbff,#ffffff);
+      border-radius:12px;
+      display:grid;place-items:center;
+    }
+    .sparkles{position:absolute;left:14px;top:14px;display:flex;gap:6px}
+    .spark{width:8px;height:8px;border-radius:2px;background:linear-gradient(180deg,#fff,#f0f9ff);filter:drop-shadow(0 6px 14px rgba(99,102,241,0.06))}
+    .tiny{font-size:12px;color:var(--muted)}
+    @media (max-width:880px){.card{grid-template-columns:1fr;max-width:760px}.panel{order:-1}}
+    .fade-up{opacity:0;transform:translateY(8px);animation:fadeUp .7s cubic-bezier(.2,.9,.3,1) forwards}
+    @keyframes fadeUp{to{opacity:1;transform:none}}
+    @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-6px)}100%{transform:translateY(0)}}
+    .chip{animation:floaty 4s ease-in-out infinite}
+    .chip:nth-child(2){animation-delay:.3s}.chip:nth-child(3){animation-delay:.6s}.chip:nth-child(4){animation-delay:.9s}.chip:nth-child(5){animation-delay:1.2s}.chip:nth-child(6){animation-delay:1.5s}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="orb one" aria-hidden></div>
+    <div class="orb two" aria-hidden></div>
+    <div class="orb three" aria-hidden></div>
+
+    <div class="card fade-up" role="region" aria-label="Get started card">
+      <div class="hero">
+        <span class="kicker" id="kicker">Welcome</span>
+        <h1 id="title">Get started — Create your account</h1>
+        <p class="lead" id="lead">Join in seconds. Choose your language and register to personalize the experience.</p>
+
+        <div class="lang-chips" aria-hidden>
+          <button class="chip active" data-lang="en">English</button>
+          <button class="chip" data-lang="hi">हिन्दी</button>
+          <button class="chip" data-lang="te">తెలుగు</button>
+          <button class="chip" data-lang="ta">தமிழ்</button>
+          <button class="chip" data-lang="kn">ಕನ್ನಡ</button>
+          <button class="chip" data-lang="ml">മലയാളം</button>
+        </div>
+
+        <p class="tiny" style="margin-top:10px">Tip: Tap a language chip to preview translations instantly.</p>
+      </div>
+
+      <div class="panel">
+        <div class="device" aria-hidden>
+          <div class="sparkles"><div class="spark"></div><div class="spark"></div><div class="spark"></div></div>
+          <div class="device-screen">
+            <div style="text-align:center">
+              <svg width="72" height="72" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2v6" stroke="#6366f1" stroke-width="1.5" stroke-linecap="round"/><path d="M6 21v-8a6 6 0 0112 0v8" stroke="#4f46e5" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <div style="font-weight:800;margin-top:10px">Quick register</div>
+              <div class="tiny" style="margin-top:6px">Fast, secure and multilingual</div>
+            </div>
+          </div>
+        </div>
+
+        <form id="regForm" aria-label="Registration form">
+          <input id="name" class="input" placeholder="Full name" required />
+          <input id="email" class="input" placeholder="Email or mobile" required />
+
+          <div class="select-wrap">
+            <select id="language" class="select" aria-label="Preferred language">
+              <option value="en">English</option>
+              <option value="hi">हिन्दी</option>
+              <option value="te">తెలుగు</option>
+              <option value="ta">தமிழ்</option>
+              <option value="kn">ಕನ್ನಡ</option>
+              <option value="ml">മലയാളം</option>
+            </select>
+            <div class="select-arrow">▾</div>
+            <div class="rainbow" id="rainbow"></div>
+          </div>
+
+          <input id="password" type="password" class="input" placeholder="Create password" required />
+
+          <button type="submit" class="submit" id="submitBtn">Register</button>
+
+          <div class="foot" id="foot">By registering you agree to our Terms & Privacy.</div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // translations
+    const T = {
+      en: {kicker:'Welcome', title:'Get started — Create your account', lead:'Join in seconds. Choose your language and register to personalize the experience.', name:'Full name', email:'Email or mobile', password:'Create password', submit:'Register', foot:'By registering you agree to our Terms & Privacy.'},
+      hi: {kicker:'स्वागत है', title:'शुरू करें — अपना खाता बनाएं', lead:'कृपया अपनी भाषा चुनें और पंजीकरण करें।', name:'पूरा नाम', email:'ईमेल या मोबाइल', password:'पासवर्ड बनाएं', submit:'रजिस्टर करें', foot:'पंजीकरण करके आप हमारे नियम व गोपनीयता को स्वीकार करते हैं।'},
+      te: {kicker:'స్వాగతం', title:'ప్రారంభించండి — మీ ఖాతా సృష్టించండి', lead:'సెకన్లలో చేరండి. మీ భాషను ఎంచుకుని నమోదు జరిపించుకోండి.', name:'పూర్తి పేరు', email:'ఇమెయిల్ లేదా మొబైల్', password:'పాస్వర్డ్ సృష్టించండి', submit:'నమోదు చేయండి', foot:'నమోదం ద్వారా మీరు మా నిబంధనలు మరియు గోప్యతా విధానాన్ని అంగీకరిస్తున్నారు.'},
+      ta: {kicker:'வரவேற்பு', title:'தொடங்குங்கள் — உங்கள் கணக்கை உருவாக்குங்கள்', lead:'வினாடி சிலத்தில்த் இணைக. உங்கள் மொழியைக் கொள்ளவும்.', name:'முழு பெயர்', email:'மின்னஞ்சல் அல்லது மொபைல்', password:'கடவுச்சொல்லை உருவாக்கவும்', submit:'பதிவு செய்', foot:'பதிவு செய்வதன் மூலம் நீங்கள் நமது விதிமுறைகளையும் தனியுரிமை கொள்கையையும் ஏற்கின்றீர்கள்.'},
+      kn: {kicker:'ಸ್ವಾಗತ', title:'ಆರಂಭಿಸಿರಿ — ನಿಮ್ಮ ಖಾತೆಯನ್ನು ರಚಿಸಿ', lead:'ಸೆಕೆಂಡುಗಳಲ್ಲಿ ಸೇರಿ. ನಿಮ್ಮ ಭಾಷೆಯನ್ನು ಆಯ್ಕೆಮಾಡಿ ಮತ್ತು ನೋಂದಾಯಿಸಿ.', name:'ಒಟ್ಟು ಹೆಸರು', email:'ಇಮೇಲ್ ಅಥವಾ ಮೊಬೈಲ್', password:'ಪಾಸ್‌ವರ್ಡ್ ರಚಿಸಿ', submit:'ನೋಂದಣಿ', foot:'ನೋಂದಾಯಿಸಿ ಮೂಲಕ ನೀವು ನಮ್ಮ ನಿಯಮಗಳು ಮತ್ತು ವೈಯಕ್ತಿಕತೆ ನೈತಿಕತೆಯನ್ನು ಒಪ್ಪುತ್ತೀರಿ.'},
+      ml: {kicker:'സ്വാഗതം', title:'ആരംഭിക്കുക — നിങ്ങളുടെ അക്കൗണ്ട് സൃഷ്ടിക്കുക', lead:'നിമിഷങ്ങൾക്കുള്ളിൽ ചേരുക. നിങ്ങളുടെ ഭാഷ തിരഞ്ഞെടുക്കുകയും രജിസ്റ്റർ ചെയ്യുക.', name:'മുഴുവൻ പേര്', email:'ഇമെയിൽ അല്ലെങ്കിൽ മൊബൈൽ', password:'പാസ്‍വേഡ് സൃഷ്ടിക്കുക', submit:'രജിസ്റ്റർ ചെയ്യുക', foot:'രജിസ്റ്റർ ചെയ്യുമ്പോൾ നിങ്ങൾ നമ്മുടെ നിബന്ധനകളും പ്രൈവസി നയവും സമ്മതിക്കുന്നു.'}
+    };
+
+    function setLang(lang){
+      const data = T[lang] || T.en;
+      document.getElementById('kicker').textContent = data.kicker;
+      document.getElementById('title').textContent = data.title;
+      document.getElementById('lead').textContent = data.lead;
+      document.getElementById('name').placeholder = data.name;
+      document.getElementById('email').placeholder = data.email;
+      document.getElementById('password').placeholder = data.password;
+      document.getElementById('submitBtn').textContent = data.submit;
+      document.getElementById('foot').textContent = data.foot;
+    }
+
+    document.querySelectorAll('.chip').forEach(c=>{
+      c.addEventListener('click',()=>{
+        document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));
+        c.classList.add('active');
+        const lang = c.dataset.lang;
+        document.getElementById('language').value = lang;
+        setLang(lang);
+      })
+    });
+
+    document.getElementById('language').addEventListener('change',e=>{
+      const val = e.target.value;
+      const chip = document.querySelector('.chip[data-lang="'+val+'"]');
+      if(chip){document.querySelectorAll('.chip').forEach(x=>x.classList.remove('active'));chip.classList.add('active');}
+      setLang(val);
+    });
+
+    // ✅ Redirect to second file on register
+    document.getElementById("regForm").addEventListener("submit", function(e) {
+      e.preventDefault(); // stop default form action
+      window.location.href = "final-TS(modified).html"; // redirect to second file
+    });
+  </script>
+</body>
+</html>

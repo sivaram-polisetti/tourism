@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>SmartTour — Select Your Category</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #2da7ff, #7e5bef, #00e5ff);
+      --card-bg: rgba(255,255,255,0.1);
+      --card-hover: rgba(255,255,255,0.2);
+      --text-dark: #0f172a;
+      --text-light: #ffffff;
+      --accent: #00e5ff;
+      --radius: 18px;
+      --shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: "Poppins", sans-serif;
+      background: var(--bg-gradient);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+      color: var(--text-dark);
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* floating glowing dots */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.15) 0, transparent 40%),
+                  radial-gradient(circle at 80% 70%, rgba(255,255,255,0.1) 0, transparent 40%);
+      animation: floatBg 12s ease-in-out infinite alternate;
+      z-index: 0;
+    }
+    @keyframes floatBg {
+      from { transform: translateY(0); }
+      to { transform: translateY(-40px); }
+    }
+
+    .wrap {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.15);
+      border-radius: 24px;
+      padding: 40px 30px;
+      backdrop-filter: blur(14px) saturate(160%);
+      border: 1px solid rgba(255,255,255,0.25);
+      box-shadow: var(--shadow);
+      max-width: 1200px;
+      width: 100%;
+      animation: fadeIn 1s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .lang-switch {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+    }
+    .lang-select {
+      padding: 8px 14px;
+      border-radius: 12px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(6px);
+      transition: 0.3s;
+    }
+    .lang-select:hover { background: var(--accent); color: #fff; }
+
+    .head {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .title {
+      font-size: 34px;
+      font-weight: 800;
+      background: linear-gradient(90deg,#fff,#00e5ff,#7e5bef);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin: 0;
+    }
+    .sub {
+      font-size: 16px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 8px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    @media (min-width: 768px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1100px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+
+    .cat {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 26px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.35s ease;
+      border: 2px solid transparent;
+      position: relative;
+      overflow: hidden;
+      color: var(--text-light);
+    }
+    .cat:hover {
+      background: var(--card-hover);
+      transform: translateY(-12px) scale(1.05);
+      border-color: #ff9800; /* Orange border */
+      box-shadow: 0 20px 55px rgba(0,229,255,0.35); /* Skyblue glow */
+    }
+    .cat::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      border: 2px solid transparent;
+      background: linear-gradient(120deg, transparent, var(--accent), transparent) border-box;
+      -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: destination-out;
+      mask-composite: exclude;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .cat:hover::after { opacity: 1; }
+
+    .cat .icon {
+      width: 60px; height: 60px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.2);
+      display: grid; place-items: center;
+      margin-bottom: 16px;
+      transition: transform 0.4s ease;
+    }
+    .cat:hover .icon { transform: rotate(-8deg) scale(1.2); }
+
+    /* Title & description with hover color */
+    .cat h3 { 
+      margin: 0; 
+      font-size: 20px; 
+      font-weight: 700; 
+      transition: color 0.3s ease;
+      color: #ffffff;
+    }
+    .cat p { 
+      font-size: 14px; 
+      margin: 6px 0 0; 
+      opacity: 0.9; 
+      transition: color 0.3s ease;
+      color: rgba(255,255,255,0.85);
+    }
+
+    .cat:hover h3 { color: #ff9800; } /* Orange title */
+    .cat:hover p { color: #fc0f62; }  /* Skyblue description */
+
+    .cta {
+      margin-top: 14px;
+      padding: 10px 16px;
+      border-radius: 14px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      color: #fff;
+      background: linear-gradient(90deg,#00e5ff,#7e5bef);
+      box-shadow: 0 8px 22px rgba(0,0,0,0.25);
+      transition: all 0.3s;
+    }
+    .cta:hover { transform: scale(1.05); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+
+    .selected-bar {
+      margin-top: 28px;
+      padding: 16px 20px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.1);
+      color: var(--text-light);
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer { margin-top: 20px; text-align: center; color: rgba(255,255,255,0.7); font-size: 13px; }
+</style>
+
+</head>
+<body>
+  <div class="wrap">
+    <section class="card">
+      <!-- Language Switch -->
+      <div class="lang-switch">
+        <select id="lang" class="lang-select">
+          <option value="en" selected>English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="te">తెలుగు</option>
+          <option value="ta">தமிழ்</option>
+          <option value="kn">ಕನ್ನಡ</option>
+          <option value="ml">മലയാളം</option>
+        </select>
+      </div>
+
+      <div class="head">
+        <h1 class="title" id="titleText">Select Your Category</h1>
+        <div class="sub" id="subtitleText">Choose the role that matches you so we can show perfect tools.</div>
+      </div>
+
+      <div class="grid">
+        <article class="cat" data-key="hotel">
+          <div class="icon">🏨</div>
+          <h3 id="hotelTitle">Hotel Owner</h3>
+          <p id="hotelDesc">Manage rooms, bookings and guest services with ease.</p>
+          <button class="cta">Choose</button></a>
+        </article>
+
+        <article class="cat" data-key="restaurant">
+          <div class="icon">🍽️</div>
+          <h3 id="restTitle">Restaurant Owner</h3>
+          <p id="restDesc">Showcase menu, accept bookings and manage orders.</p>
+          <button class="cta">Choose</button>
+        </article>
+
+        <article class="cat" data-key="guide">
+          <div class="icon">🧑‍🦯</div>
+          <h3 id="guideTitle">Tourist Guide</h3>
+          <p id="guideDesc">List your guided tours, availability and reviews.</p>
+          <button class="cta">Choose</button>
+        </article>
+
+        <article class="cat" data-key="agency">
+          <div class="icon">✈️</div>
+          <h3 id="agencyTitle">Travel Agency</h3>
+          <p id="agencyDesc">Create packages, manage bookings and handle payments.</p>
+          <button class="cta">Choose</button>
+        </article>
+      </div>
+      <div id="selectedBar" class="selected-bar">
+        <div>
+          <strong id="selectedLabel" data-key="">Selected: None</strong><br/>
+          <span id="selectedSub">You can proceed to register or upload documents.</span>
+        </div>
+        <button id="proceedBtn" class="cta">Proceed</button>
+      </div>
+      <div class="footer" id="footerText">Available in English, Hindi and all South Indian languages.</div>
+    </section>
+  </div>
+
+  <script>
+// Translations for all languages
+const translations = {
+  en: {
+    title: "Select Your Category",
+    subtitle: "Choose the role that matches you so we can show perfect tools.",
+    footer: "Available in English, Hindi and all South Indian languages.",
+    selectedPrefix: "Selected:",
+    proceed: "Proceed",
+    hotel: "Hotel Owner",
+    hotelDesc: "Manage rooms, bookings and guest services with ease.",
+    restaurant: "Restaurant Owner",
+    restaurantDesc: "Showcase menu, accept bookings and manage orders.",
+    guide: "Tourist Guide",
+    guideDesc: "List your guided tours, availability and reviews.",
+    agency: "Travel Agency",
+    agencyDesc: "Create packages, manage bookings and handle payments."
+  },
+  hi: {
+    title: "अपनी श्रेणी चुनें",
+    subtitle: "अपनी भूमिका चुनें ताकि हम आपके लिए सही टूल दिखा सकें।",
+    footer: "अंग्रेज़ी, हिंदी और सभी दक्षिण भारतीय भाषाओं में उपलब्ध।",
+    selectedPrefix: "चयनित:",
+    proceed: "आगे बढ़ें",
+    hotel: "होटल मालिक",
+    hotelDesc: "कमरों, बुकिंग और अतिथि सेवाओं का प्रबंधन करें।",
+    restaurant: "रेस्टोरेंट मालिक",
+    restaurantDesc: "मेनू दिखाएँ, बुकिंग स्वीकार करें और ऑर्डर प्रबंधित करें।",
+    guide: "पर्यटन गाइड",
+    guideDesc: "अपने गाइडेड टूरों, उपलब्धता और समीक्षाओं को सूचीबद्ध करें।",
+    agency: "यात्रा एजेंसी",
+    agencyDesc: "पैकेज बनाएं, बुकिंग प्रबंधित करें और भुगतान संभालें।"
+  },
+  te: {
+    title: "మీ వర్గాన్ని ఎంచుకోండి",
+    subtitle: "మీకు సరిపోయే పాత్రను ఎంచుకోండి, మేము మీకోసమని సరైన టూల్స్ చూపుతాము.",
+    footer: "ఇంగ్లీష్, హిందీ మరియు అన్ని దక్షిణ భారతీయ భాషలలో అందుబాటులో ఉంటుంది.",
+    selectedPrefix: "ఎంచుకున్నది:",
+    proceed: "కొనసాగించు",
+    hotel: "హోటల్ యజమాని",
+    hotelDesc: "గదులు, బుకింగ్‌లు మరియు అతిథి సేవలను సులభంగా నిర్వహించండి.",
+    restaurant: "రెస్టారెంట్ యజమాని",
+    restaurantDesc: "మెనూ చూపించండి, బుకింగ్‌లు స్వీకరించండి మరియు ఆర్డర్స్ నిర్వహించండి.",
+    guide: "పర్యాటక గైడ్",
+    guideDesc: "మీ గైడ్ చేసిన టూర్లు, అందుబాటును మరియు సమీక్షలను జాబితా చేయండి.",
+    agency: "ప్రయాణ ఏజెన్సీ",
+    agencyDesc: "ప్యాకేజీలు సృష్టించండి, బుకింగ్ నిర్వహించండి మరియు చెల్లింపులను నిర్వహించండి."
+  },
+  ta: {
+    title: "உங்கள் வகையை தேர்ந்தெடுக்கவும்",
+    subtitle: "உங்களுக்கு பொருத்தமான பாத்திரத்தை தேர்வு செய்தால் நாங்கள் சிறந்த கருவிகளைக் காண்பிக்க முடியும்.",
+    footer: "ஆங்கிலம், ஹிந்தி மற்றும் அனைத்து தென்னிந்திய மொழிகளிலும் கிடைக்கிறது.",
+    selectedPrefix: "தேர்ந்தெடுத்தது:",
+    proceed: "தொடரவும்",
+    hotel: "ஹோட்டல் உரிமையாளர்",
+    hotelDesc: "அறைகள், முன்பதிவு மற்றும் விருந்தினர் சேவைகளை எளிதாக நிர்வகிக்கவும்.",
+    restaurant: "உணவக உரிமையாளர்",
+    restaurantDesc: "மெனுவை காண்பிக்கவும், முன்பதிவுகளை ஏற்கவும் மற்றும் ஆர்டர்களை நிர்வகிக்கவும்.",
+    guide: "பயண வழிகாட்டி",
+    guideDesc: "உங்கள் வழிகாட்டி சுற்றுலாக்கள், கிடைக்கும் காலம் மற்றும் மதிப்புரைகள் பட்டியலிடுங்கள்.",
+    agency: "பயண நிறுவனம்",
+    agencyDesc: "பேக்கேஜ்களை உருவாக்கவும், முன்பதிவுகளை நிர்வகிக்கவும் மற்றும் கட்டணங்களை கையாளவும்."
+  },
+  kn: {
+    title: "ನಿಮ್ಮ ವರ್ಗವನ್ನು ಆಯ್ಕೆಮಾಡಿ",
+    subtitle: "ನಿಮ್ಮಿಗೆ ಹೊಂದಿಕೊಂಡಿರುವ ಪಾತ್ರವನ್ನು ಆಯ್ಕೆಮಾಡಿ ಹಾಗಾದರೆ ನಾವು ನಿಮಗೆ ಸೂಕ್ತವಾದ ಸಾಧನಗಳನ್ನು ತೋರಿಸುತ್ತೇವೆ.",
+    footer: "ಇಂಗ್ಲಿಷ್, ಹಿಂದಿ ಮತ್ತು ಎಲ್ಲಾ ದಕ್ಷಿಣ ಭಾರತೀಯ ಭಾಷೆಗಳಲ್ಲಿ ಲಭ್ಯವಿದೆ.",
+    selectedPrefix: "ಆಯ್ದದ್ದು:",
+    proceed: "ಮುಂದೆ ನವಡಿ",
+    hotel: "ಹೋಟೆಲ್ ಮಾಲೀಕರು",
+    hotelDesc: "ಹೋಟೆಲಿನ ಕೊಠಡಿಗಳ ಸಂಚಾರ, ಬುಕ್ಕಿಂಗ್‍ಗಳನ್ನು ಸುಲಭವಾಗಿ ನಿರ್ವಹಿಸಿ.",
+    restaurant: "ಉಡುಗೆ ಮನೆ ಮಾಲೀಕರು",
+    restaurantDesc: "ಮೆನು ಪ್ರದರ್ಶಿಸಿ, ಬುಕ್ಕಿಂಗ್‍ಗಳನ್ನು ಸ್ವೀಕರಿಸಿ ಮತ್ತು ಆರ್ಡರ್‍ಗಳನ್ನು ನಿರ್ವಹಿಸಿ.",
+    guide: "ಪ್ರವಾಸ ಮಾರ್ಗದರ್ಶಕ",
+    guideDesc: "ನಿಮ್ಮ ಮಾರ್ಗದರ್ಶಿತ ಪ್ರವಾಸಗಳು, ಲಭ್ಯತೆ ಮತ್ತು ವಿಮರ್ಶೆಗಳನ್ನು ಪಟ್ಟಿಮಾಡಿ.",
+    agency: "ಪ್ರವಾಸ ಏಜೆನ್ಸಿ",
+    agencyDesc: "ಪ್ಯಾಕೇಜ್‌ಗಳನ್ನು ರಚಿಸಿ, ಬುಕ್ಕಿಂಗ್‌ಗಳನ್ನು ನಿರ್ವಹಿಸಿ ಮತ್ತು ಪಾವತಿಗಳನ್ನು ಹಾಂಡಲ್ ಮಾಡಿ."
+  },
+  ml: {
+    title: "നിങ്ങളുടെ വിഭാഗം തിരഞ്ഞെടുക്കുക",
+    subtitle: "നിങ്ങൾക്കു അനുയോജ്യമായ പാത്രം തിരഞ്ഞെടുക്കുക, ഞങ്ങൾ നിങ്ങൾക്ക് അനുയോജ്യമായ ഉപകരണങ്ങൾ കാണിക്കും.",
+    footer: "ഇംഗ്ലീഷ്, ഹിന്ദി, എല്ലാ ദക്ഷിണ ഇന്ത്യൻ ഭാഷകളിലും ലഭ്യമാണ്.",
+    selectedPrefix: "തിരഞ്ഞെടുത്തത്:",
+    proceed: "മുന്നോട്ട് പോകുക",
+    hotel: "ഹോട്ടൽ ഉടമ",
+    hotelDesc: "റൂമുകൾ, ബുക്കിങ്ങുകൾ, ഗസ്റ്റ് സേവനങ്ങൾ എളുപ്പത്തിൽ നിയന്ത്രിക്കുക.",
+    restaurant: "റസ്റ്റോറന്റ് ഉടമ",
+    restaurantDesc: "മെനു പ്രദർശിപ്പിക്കുക, ബുക്കിങ്ങുകൾ സ്വീകരിക്കുക, ഓർഡറുകൾ നിയന്ത്രിക്കുക.",
+    guide: "ടൂറിസ്റ്റ് ഗൈഡ്",
+    guideDesc: "നിങ്ങളുടെ ഗൈഡഡ് ടൂറുകൾ, ലഭ്യത, അവലോകനങ്ങൾ പട്ടികപ്പെടുത്തുക.",
+    agency: "ട്രാവൽ ഏജൻസി",
+    agencyDesc: "പാക്കേജുകൾ സൃഷ്ടിക്കുക, ബുക്കിംഗുകൾ കൈകാര്യം ചെയ്യുക, പേയ്മെന്റുകൾ കൈകാര്യം ചെയ്യുക."
+  }
+};
+
+// DOM elements
+const langSelect = document.getElementById("lang");
+const titleText = document.getElementById("titleText");
+const subtitleText = document.getElementById("subtitleText");
+const footerText = document.getElementById("footerText");
+const selectedBar = document.getElementById("selectedBar");
+const selectedLabel = document.getElementById("selectedLabel");
+const proceedBtn = document.getElementById("proceedBtn");
+
+const hotelTitle = document.getElementById("hotelTitle");
+const hotelDesc = document.getElementById("hotelDesc");
+const restTitle = document.getElementById("restTitle");
+const restDesc = document.getElementById("restDesc");
+const guideTitle = document.getElementById("guideTitle");
+const guideDesc = document.getElementById("guideDesc");
+const agencyTitle = document.getElementById("agencyTitle");
+const agencyDesc = document.getElementById("agencyDesc");
+
+// Update UI with selected language
+function updateLanguage(lang) {
+  const t = translations[lang];
+  titleText.textContent = t.title;
+  subtitleText.textContent = t.subtitle;
+  footerText.textContent = t.footer;
+  proceedBtn.textContent = t.proceed;
+  hotelTitle.textContent = t.hotel;
+  hotelDesc.textContent = t.hotelDesc;
+  restTitle.textContent = t.restaurant;
+  restDesc.textContent = t.restaurantDesc;
+  guideTitle.textContent = t.guide;
+  guideDesc.textContent = t.guideDesc;
+  agencyTitle.textContent = t.agency;
+  agencyDesc.textContent = t.agencyDesc;
+
+  // Update selected bar if a service is already chosen
+  if (selectedBar.style.display === "flex") {
+    const key = selectedLabel.dataset.key;
+    selectedLabel.textContent = t.selectedPrefix + " " + t[key];
+  }
+}
+
+// Language change event
+langSelect.addEventListener("change", (e) => {
+  updateLanguage(e.target.value);
+});
+
+// Handle category clicks
+document.querySelectorAll(".cat").forEach((cat) => {
+  cat.addEventListener("click", () => {
+    const key = cat.dataset.key;
+    const lang = langSelect.value;
+    const t = translations[lang];
+
+    selectedLabel.textContent = t.selectedPrefix + " " + t[key];
+    selectedLabel.dataset.key = key;
+    selectedBar.style.display = "flex";
+  });
+});
+
+
+// Init default language
+updateLanguage("en");
+
+// Handle proceed button click
+proceedBtn.addEventListener("click", () => {
+  const selectedKey = selectedLabel.dataset.key;
+
+  switch (selectedKey) {
+    case "hotel":
+      window.location.href = "/home/sivaram/Desktop/project/hotel-reg.html"; // 🔗 Hotel Owner page
+      break;
+    case "restaurant":
+      window.location.href = "/home/sivaram/Desktop/project/restaurant-reg.html"; // 🔗 Restaurant Owner page
+      break;
+    case "guide":
+      window.location.href = "/home/sivaram/Desktop/project/guide-reg.html"; // 🔗 Tourist Guide page
+      break;
+    case "agency":
+      window.location.href = "/home/sivaram/Desktop/project/travellagency-reg.html"; // 🔗 Travel Agency page
+      break;
+    default:
+      alert("Please select a category first!");
+  }
+});
+
+
+  </script>
+</body>
+</html>
+

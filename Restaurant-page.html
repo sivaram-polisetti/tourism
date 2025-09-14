@@ -1,0 +1,851 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Restaurant Owner Dashboard</title>
+  <style>
+    /* ====== Base / Layout ====== */
+    :root{
+      --accent:#ff6f3c;
+      --accent-2:#ff8a4d;
+      --muted:#6b7280;
+      --glass: rgba(255,255,255,0.6);
+      --card-bg: rgba(255,255,255,0.9);
+      --radius:14px;
+      --shadow: 0 8px 24px rgba(13,19,40,0.06);
+      --glass-border: rgba(255,255,255,0.6);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#fffaf6 0%, #f2fbff 100%);
+      color:#0f172a;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      overflow-x:hidden;
+    }
+    .container{max-width:1200px;margin:24px auto;padding:20px;position:relative;z-index:2}
+
+    header.top {
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:18px;
+    }
+    .brand{
+      display:flex;gap:12px;align-items:center;
+    }
+    .logo{
+      width:56px;height:56px;border-radius:12px;overflow:hidden;flex-shrink:0;
+      box-shadow: var(--shadow);
+      border:4px solid rgba(255,255,255,0.6);
+    }
+    .logo img{width:100%;height:100%;object-fit:cover}
+    h1{font-size:1.2rem;margin:0}
+    .sub{color:var(--muted);font-size:0.9rem}
+
+    .controls{display:flex;gap:8px;align-items:center}
+    select, .toggle-btn, .btn {
+      border:0;padding:10px 12px;border-radius:10px;background:linear-gradient(180deg,#fff,#fffbf8);
+      box-shadow: 0 4px 12px rgba(16,24,40,0.06);cursor:pointer;font-weight:600;
+    }
+    .toggle-btn {display:flex;align-items:center;gap:8px}
+    .status-dot{width:10px;height:10px;border-radius:50%}
+
+    /* ====== Grid sections ====== */
+    .grid {
+      display:grid;
+      grid-template-columns: 1fr 360px;
+      gap:18px;
+      align-items:start;
+    }
+
+    /* ====== Left Column (main) ====== */
+    .card{background:var(--card-bg);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow);border:1px solid rgba(255,255,255,0.6)}
+    .owner-card{display:flex;gap:16px;align-items:center}
+    .owner-meta{flex:1}
+    .owner-meta h2{margin:0;font-size:1.1rem}
+    .owner-actions{display:flex;gap:8px;margin-top:8px}
+    .badge{display:inline-block;padding:6px 8px;border-radius:999px;background:rgba(15,23,42,0.05);font-weight:600;font-size:0.85rem}
+
+    /* Stat cards row */
+    .stats{display:flex;gap:12px;margin-top:12px}
+    .stat{flex:1;padding:12px;border-radius:12px;background:linear-gradient(180deg,#fff,#fff);text-align:center;transition:transform .18s ease}
+    .stat:hover{transform:translateY(-6px)}
+    .stat h3{margin:0;font-size:1.15rem}
+    .small{color:var(--muted);font-size:0.85rem}
+
+    /* Orders + Chart */
+    .orders-section{display:flex;gap:12px;margin-top:16px;flex-direction:column}
+    .order-queue{display:grid;gap:10px}
+    .order-row{display:flex;justify-content:space-between;padding:10px;border-radius:10px;background:rgba(15,23,42,0.03)}
+    .order-row:hover{transform:translateY(-4px);transition:transform .15s}
+    .order-left{display:flex;gap:10px;align-items:center}
+    .order-pill{padding:6px 8px;border-radius:8px;background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;font-weight:700;font-size:.85rem}
+    canvas{width:100%;height:80px}
+
+    /* Menu management */
+    .menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
+    .menu-item{background:linear-gradient(180deg,#fff,#fff);padding:10px;border-radius:12px;position:relative;overflow:hidden;box-shadow: var(--shadow);transition:transform .18s}
+    .menu-item:hover{transform:translateY(-6px)}
+    .menu-item img{width:100%;height:120px;object-fit:cover;border-radius:8px}
+    .menu-item .meta{padding:8px 4px}
+    .menu-actions{position:absolute;top:8px;right:8px;display:flex;gap:6px}
+    .micro{padding:6px;border-radius:8px;background:rgba(0,0,0,0.06);cursor:pointer;font-weight:700}
+
+    /* Reviews */
+    .review-list{display:grid;gap:10px;margin-top:12px}
+    .review-card{display:flex;gap:12px;padding:10px;border-radius:12px;background:rgba(15,23,42,0.03)}
+    .review-card img{width:86px;height:86px;object-fit:cover;border-radius:8px}
+    .reply-box{margin-top:8px;display:flex;gap:8px}
+    .reply-box input{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(15,23,42,0.08)}
+
+    /* ====== Right Column (side) ====== */
+    .side-top{display:flex;flex-direction:column;gap:12px}
+    .payout-tabs{display:flex;gap:6px}
+    .tab{flex:1;padding:8px;border-radius:10px;text-align:center;cursor:pointer;background:rgba(15,23,42,0.03)}
+    .tab.active{background:linear-gradient(90deg,#fff,#fff);box-shadow:var(--shadow)}
+    .payout-list{margin-top:10px}
+    .payout-row{display:flex;justify-content:space-between;padding:8px;border-radius:8px;background:rgba(15,23,42,0.03);font-weight:600}
+    .offers-list{display:grid;gap:8px;margin-top:8px}
+    .offer-card{padding:10px;border-radius:12px;display:flex;justify-content:space-between;gap:8px;align-items:center;background:linear-gradient(180deg,#fff,#fff);box-shadow:var(--shadow)}
+    .offer-expire{font-weight:700;color:var(--accent)}
+
+    /* ====== Small screens ====== */
+    @media (max-width:1000px){
+      .grid{grid-template-columns:1fr}
+      .side {order:2}
+    }
+    @media (max-width:520px){
+      header.top{flex-direction:column;align-items:flex-start;gap:12px}
+      .stats{flex-direction:column}
+      .owner-card{flex-direction:column;align-items:flex-start}
+      .menu-grid{grid-template-columns:1fr}
+    }
+
+    /* ====== Background decorations ====== */
+    .floating{
+      position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden
+    }
+    .food{position:absolute;font-size:28px;opacity:.18;animation:floatUp linear infinite}
+    @keyframes floatUp{
+      from {transform:translateY(110vh) rotate(0deg)}
+      to {transform:translateY(-20vh) rotate(360deg)}
+    }
+    .wave {
+      position:fixed;left:-50%;bottom:-120px;width:220%;height:220px;background:radial-gradient(circle at 30% 30%, rgba(255,111,60,0.06), transparent 20%), radial-gradient(circle at 70% 70%, rgba(255,138,77,0.06), transparent 20%);border-radius:50%;z-index:0;
+    }
+
+    /* ====== Tiny helpers ====== */
+    .muted{color:var(--muted)}
+    .flex{display:flex;gap:8px;align-items:center}
+    .right{margin-left:auto}
+    .btn{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#fff}
+    .ghost{background:transparent;border:1px solid rgba(15,23,42,0.06)}
+    .pill{padding:6px 8px;border-radius:999px;background:rgba(15,23,42,0.06);font-weight:700}
+  </style>
+</head>
+<body>
+  <!-- Background floating food icons -->
+  <div class="floating" aria-hidden="true">
+    <div class="food" style="left:6%;animation-duration:20s;animation-delay:0s">🍕</div>
+    <div class="food" style="left:22%;animation-duration:18s;animation-delay:2s">🍔</div>
+    <div class="food" style="left:40%;animation-duration:22s;animation-delay:4s">🍜</div>
+    <div class="food" style="left:62%;animation-duration:19s;animation-delay:6s">🥗</div>
+    <div class="food" style="left:84%;animation-duration:21s;animation-delay:8s">🍩</div>
+  </div>
+  <div class="wave" aria-hidden="true"></div>
+
+  <div class="container">
+    <header class="top">
+      <div class="brand">
+        <div class="logo">
+          <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=60" alt="restaurant logo">
+        </div>
+        <div>
+          <h1 id="page-title">Bistro Partner</h1>
+          <div class="sub" id="page-sub">Partner Dashboard</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <label for="lang" class="muted" style="font-weight:700">Language</label>
+        <select id="lang" aria-label="language-switch">
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="te">తెలుగు</option>
+          <option value="ta">தமிழ்</option>
+          <option value="kn">ಕನ್ನಡ</option>
+          <option value="ml">മലയാളം</option>
+        </select>
+
+        <div class="toggle-btn" title="Open / Closed">
+          <div class="status-dot" id="status-dot" style="background:#34d399"></div>
+          <div id="status-label" style="font-weight:700">Open</div>
+        </div>
+
+        <button class="btn" id="new-offer-btn">+ New Offer</button>
+      </div>
+    </header>
+
+    <section class="grid">
+      <!-- LEFT: MAIN -->
+      <div>
+        <div class="card owner-card">
+          <img class="logo" src="https://images.unsplash.com/photo-1523942839745-7848caa0f20b?auto=format&fit=crop&w=800&q=60" alt="restaurant photo" style="width:120px;height:120px;border-radius:12px">
+          <div class="owner-meta">
+            <h2 id="rest-name">Ocean Bite</h2>
+            <div class="sub" id="rest-address">Beach Street, Chennai • Multi-Cuisine</div>
+
+            <div class="owner-actions">
+              <div class="badge" id="live-orders-pill">Live Orders • <strong id="live-count">0</strong></div>
+              <div class="badge" id="rating-pill">Rating • <strong id="avg-rating">4.6</strong> ⭐</div>
+            </div>
+
+            <div class="stats" style="margin-top:12px">
+              <div class="stat">
+                <div class="small">Ongoing Orders</div>
+                <h3 id="stat-ongoing" data-target="12">0</h3>
+              </div>
+              <div class="stat">
+                <div class="small">Pending</div>
+                <h3 id="stat-pending" data-target="3">0</h3>
+              </div>
+              <div class="stat">
+                <div class="small">Delivered Today</div>
+                <h3 id="stat-delivered" data-target="102">0</h3>
+              </div>
+              <div class="stat">
+                <div class="small">Earnings (Today)</div>
+                <h3 id="stat-earn-today" data-target="12500">0</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Orders & Chart -->
+        <div class="card" style="margin-top:14px">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <h3 style="margin:0" id="orders-title">Orders & Insights</h3>
+            <div class="muted" style="font-size:0.9rem">Realtime feed & sales</div>
+            <div class="right small muted">Last updated: <span id="last-updated">--</span></div>
+          </div>
+
+          <div class="orders-section">
+            <div style="display:flex;gap:12px;margin-top:12px;align-items:center">
+              <div style="flex:1">
+                <canvas id="salesCanvas"></canvas>
+              </div>
+              <div style="width:220px">
+                <div class="pill">Avg order value</div>
+                <div style="font-weight:800;font-size:1.1rem;margin-top:8px">₹ <span id="avg-order">250</span></div>
+                <div class="muted" style="font-size:.9rem;margin-top:6px">Conversion vs last week: <strong id="conv">+6%</strong></div>
+              </div>
+            </div>
+
+            <h4 style="margin:8px 0 6px 0">Incoming Orders Queue</h4>
+            <div class="order-queue" id="orderQueue">
+              <!-- rows inserted by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Menu Management -->
+        <div class="card" style="margin-top:14px">
+          <div style="display:flex;align-items:center;justify-content:space-between">
+            <h3 style="margin:0" id="menu-title">Menu Management</h3>
+            <div class="flex">
+              <input id="menu-search" placeholder="Search menu..." style="padding:8px;border-radius:8px;border:1px solid rgba(15,23,42,0.06)" />
+              <button class="ghost" id="add-item-btn">+ Add</button>
+            </div>
+          </div>
+
+          <div class="menu-grid" id="menuGrid">
+            <!-- items by JS -->
+          </div>
+        </div>
+
+        <!-- Reviews -->
+        <div class="card" style="margin-top:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3 style="margin:0" id="review-title">Customer Reviews</h3>
+            <div class="small muted">Verified delivery photos allowed</div>
+          </div>
+
+          <div class="review-list" id="reviewList">
+            <!-- reviews inserted by JS -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT: SIDE -->
+      <aside class="side">
+        <div class="side-top">
+          <!-- Payouts -->
+          <div class="card">
+            <h4 style="margin:0">Payouts & Settlements</h4>
+            <div class="payout-tabs" style="margin-top:8px">
+              <div class="tab active" data-platform="swiggy">Swiggy</div>
+              <div class="tab" data-platform="zomato">Zomato</div>
+              <div class="tab" data-platform="ubereats">UberEats</div>
+            </div>
+            <div class="payout-list" id="payoutList" style="margin-top:10px">
+              <!-- rows -->
+            </div>
+          </div>
+
+          <!-- Offers -->
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <h4 style="margin:0">Active Offers</h4>
+              <div class="small muted">Boost sales with promos</div>
+            </div>
+            <div class="offers-list" id="offersList">
+              <!-- offer cards by JS -->
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card">
+            <h4 style="margin:0">Quick Actions</h4>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px">
+              <button class="btn" id="sync-btn">Sync Menu to Platforms</button>
+              <button class="ghost" id="settle-btn">Request Settlement</button>
+              <button class="ghost" id="export-btn">Export Reports</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </section>
+  </div>
+
+  <script>
+    /*********************************************
+     * Sample data (would come from server in real app)
+     *********************************************/
+    const sampleMenu = [
+      { id:1, name:'Paneer Butter Masala', price:220, badge:'Top-Selling', img:'https://images.unsplash.com/photo-1604908176560-80f0b7ff3f78?auto=format&fit=crop&w=800&q=60', available:true },
+      { id:2, name:'Margherita Pizza', price:320, badge:'New', img:'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=60', available:true },
+      { id:3, name:'Veg Biryani', price:190, badge:'', img:'https://images.unsplash.com/photo-1604908177114-7f2f1f5f9b8b?auto=format&fit=crop&w=800&q=60', available:false },
+      { id:4, name:'Caesar Salad', price:160, badge:'Healthy', img:'https://images.unsplash.com/photo-1543352634-7f6a86e2a4b4?auto=format&fit=crop&w=800&q=60', available:true },
+    ];
+
+    const sampleOrders = [
+      { id:'ORD-1001', items:['Paneer Butter Masala','Naan'], eta: '12 mins', platform:'Swiggy', status:'preparing' },
+      { id:'ORD-1002', items:['Margherita Pizza'], eta: '18 mins', platform:'Zomato', status:'accepted' },
+      { id:'ORD-1003', items:['Veg Biryani','Raita'], eta: '25 mins', platform:'Swiggy', status:'preparing' },
+    ];
+
+    const sampleReviews = [
+      { id:1, name:'Ajay', rating:5, text:'Amazing food and quick delivery!', photo:'https://images.unsplash.com/photo-1562967914-6086b53b04b2?auto=format&fit=crop&w=800&q=60', reply:'' },
+      { id:2, name:'Meera', rating:4, text:'Tasty, but a little spicy for me.', photo:'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=60', reply:'' },
+    ];
+
+    const samplePayouts = {
+      swiggy: [
+        { id:'P-201', amount:42000, status:'Cleared', date:'2025-09-01' },
+        { id:'P-209', amount:15000, status:'Pending', date:'2025-09-10' },
+      ],
+      zomato:[
+        { id:'Z-112', amount:22000, status:'Cleared', date:'2025-09-05' },
+      ],
+      ubereats:[
+        { id:'U-55', amount:8000, status:'Pending', date:'2025-09-09' },
+      ]
+    };
+
+    let offers = [
+      { id:11, title:'Flat 20% Off - Lunch', type:'Discount', expires: Date.now() + (1000*60*60*24), platform:'Swiggy' },
+      { id:12, title:'Free Dessert on Orders > ₹500', type:'BOGO', expires: Date.now() + (1000*60*30), platform:'Zomato' },
+    ];
+
+    /*********************************************
+     * Multilingual translations
+     *********************************************/
+    const translations = {
+      en:{
+        pageTitle:'Bistro Partner',
+        pageSub:'Partner Dashboard',
+        ordersTitle:'Orders & Insights',
+        menuTitle:'Menu Management',
+        reviewTitle:'Customer Reviews',
+        payoutsTitle:'Payouts & Settlements',
+        offersTitle:'Active Offers',
+        liveOrders:'Live Orders',
+        rating:'Rating',
+        ongoing:'Ongoing Orders',
+        pending:'Pending',
+        delivered:'Delivered Today',
+        earnings:'Earnings (Today)',
+        avgOrder:'Avg order value',
+        incoming:'Incoming Orders Queue',
+        quickActions:'Quick Actions',
+        newOfferBtn:'+ New Offer',
+        languageLabel:'Language'
+      },
+      hi:{
+        pageTitle:'बिस्टरो पार्टनर',
+        pageSub:'पार्टनर डैशबोर्ड',
+        ordersTitle:'ऑर्डर और इनसाइट्स',
+        menuTitle:'मेन्यू प्रबंधन',
+        reviewTitle:'ग्राहक समीक्षाएँ',
+        payoutsTitle:'पेआउट और सेटलमेंट',
+        offersTitle:'सक्रिय ऑफ़र',
+        liveOrders:'लाइव ऑर्डर्स',
+        rating:'रेटिंग',
+        ongoing:'चल रहे ऑर्डर',
+        pending:'लंबित',
+        delivered:'आज डिलीवर',
+        earnings:'आय (आज)',
+        avgOrder:'औसत ऑर्डर मूल्य',
+        incoming:'आगामी ऑर्डर',
+        quickActions:'त्वरित क्रियाएँ',
+        newOfferBtn:'+ नया ऑफ़र',
+        languageLabel:'भाषा'
+      },
+      te:{
+        pageTitle:'బిస్ట్రో పార్టనర్',
+        pageSub:'పార్ట్నర్ డాష్బోర్డ్',
+        ordersTitle:'ఆర్డర్లు & ఇన్సైట్స్',
+        menuTitle:'మెను నిర్వహణ',
+        reviewTitle:'గ్రాహక సమీక్షలు',
+        payoutsTitle:'పేవుట్ & సెటిల్మెంట్లు',
+        offersTitle:'సక్రియమైన ఆఫర్లు',
+        liveOrders:'లైవ్ ఆర్డర్లు',
+        rating:'రేటింగ్',
+        ongoing:'ప్రస్తుత ఆర్డర్లు',
+        pending:'పెండింగ్',
+        delivered:'ఈ రోజు డెలివరీ',
+        earnings:'సొమ్ము (ఈ రోజు)',
+        avgOrder:'సగటు ఆర్డర్ విలువ',
+        incoming:'వచ్చే ఆర్డర్లు',
+        quickActions:'త్వరిత చర్యలు',
+        newOfferBtn:'+ కొత్త ఆఫర్',
+        languageLabel:'భాష'
+      },
+      ta:{
+        pageTitle:'பிஸ்ட்ரோ பார்ட்னர்',
+        pageSub:'பார்ட்னர் டாஷ்போர್ಡ್',
+        ordersTitle:'ஆர்டர்கள் மற்றும்洞ைன்சைட்ஸ்',
+        menuTitle:'மெனு மேலாண்மை',
+        reviewTitle:'வாடிக்கையாளர் விமர்சனங்கள்',
+        payoutsTitle:'கட்டணங்கள் மற்றும் செட்டில்மென்ட்',
+        offersTitle:'செயல்பாட்டிலுள்ள சலுகைகள்',
+        liveOrders:'லைவ் ஆர்டர்கள்',
+        rating:'மதிப்பீடு',
+        ongoing:'நடப்பு ஆர்டர்கள்',
+        pending:'மீதமுள்ளவை',
+        delivered:'இன்று வழங்கப்பட்டது',
+        earnings:'வருமானம் (இன்று)',
+        avgOrder:'சராசரி ஆர்டர் மதிப்பு',
+        incoming:'அடுத்து வரும் ஆர்டர்கள்',
+        quickActions:'விரைவு செயல்கள்',
+        newOfferBtn:'+ புதிய சலுகை',
+        languageLabel:'மொழி'
+      },
+      kn:{
+        pageTitle:'ಬಿಸ್ಟ್‌ರೊ ಪಾರ್ಟ್ನರ್',
+        pageSub:'ಪಾರ್ಟ್ನರ್ ಡ್ಯಾಶ್‌ಬೋರ್ಡ್',
+        ordersTitle:'ಆರ್ಡರ್ಸ್ ಮತ್ತು ಒಳನೋಟಗಳು',
+        menuTitle:'ಮೆನು ನಿರ್ವಹಣೆ',
+        reviewTitle:'ಗ್ರಾಹಕ ವಿಮರ್ಶೆಗಳು',
+        payoutsTitle:'ಪೇಔಟ್ಸ್ ಮತ್ತು ಸೆಟ್ಲ್ಮೆಂಟ್',
+        offersTitle:'ಸಕ್ರಿಯ ಆಫರ್‌ಗಳು',
+        liveOrders:'ಲೈವ್ ಆರ್ಡರ್‌ಗಳು',
+        rating:'ಅಂಕ',
+        ongoing:'ಪ್ರಗತಿಯಲ್ಲಿ உள்ள ಆರ್ಡರ್‌ಗಳು',
+        pending:'ಉಪేక్షಿತ',
+        delivered:'ಇನಿ ನೀಡಲಾಗಿದೆ',
+        earnings:'今日 ಆದಾಯ',
+        avgOrder:'ಸರಾಸರಿ ಆರ್ಡರ್ ಮೌಲ್ಯ',
+        incoming:'ಮುಂದಿನ ಆರ್ಡರ್‌ಗಳು',
+        quickActions:'ವೇಗದ ಕ್ರಿಯೆಗಳು',
+        newOfferBtn:'+ ಹೊಸ ಆಫರ್',
+        languageLabel:'ಭಾಷೆ'
+      },
+      ml:{
+        pageTitle:'ബിസ്ട്രോ പാർട്നർ',
+        pageSub:'പാർട്നർ ഡാഷ്ബോർഡ്',
+        ordersTitle:'ഓർഡറുകളും ഇന്‍സൈറ്റുകളും',
+        menuTitle:'മെനു മാനേജ്‌മെന്റ്',
+        reviewTitle:'ഗ്രാഹക അവലോകനങ്ങൾ',
+        payoutsTitle:'പേയ്മെന്റുകൾ & സെറ്റിൽമെന്റ്സ്',
+        offersTitle:'സജീവ ഓഫറുകൾ',
+        liveOrders:'ലീവ് ഓർഡറുകൾ',
+        rating:'റേറ്റിംഗ്',
+        ongoing:'ഓൺഗോയിംഗ് ഓർഡറുകൾ',
+        pending:'പെൻഡിംഗ്',
+        delivered:'ഇന്നു ഡിവർഡ്',
+        earnings:'ഉപാദാനം (ഇന്ന്)',
+        avgOrder:'ശരാശരി ഓർഡർ മൂല്യം',
+        incoming:'അടുത്തിരിക്കുന്ന ഓർഡറുകൾ',
+        quickActions:'ആഡ്‌സ്മാർട്ട് ആക്ഷനുകൾ',
+        newOfferBtn:'+ പുതിയ ഓഫർ',
+        languageLabel:'ഭാഷ'
+      }
+    };
+
+    /*********************************************
+     * Utility helpers
+     *********************************************/
+    function $(sel){return document.querySelector(sel)}
+    function $all(sel){return Array.from(document.querySelectorAll(sel))}
+
+    /*********************************************
+     * Render functions
+     *********************************************/
+    function renderMenu(gridEl, list){
+      gridEl.innerHTML = '';
+      list.forEach(item=>{
+        const div = document.createElement('div');
+        div.className='menu-item card';
+        div.innerHTML = `
+          <div class="menu-actions">
+            <div class="micro ghost" data-action="edit" data-id="${item.id}">✏️</div>
+            <div class="micro ghost" data-action="del" data-id="${item.id}">🗑️</div>
+          </div>
+          <img src="${item.img}" alt="${item.name}">
+          <div class="meta">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <strong>${item.name}</strong>
+              <div class="pill">₹ ${item.price}</div>
+            </div>
+            <div class="muted" style="margin-top:6px">
+              ${item.badge? `<span class="badge">${item.badge}</span>`:''}
+              ${item.available? '<span class="pill" style="margin-left:6px">Available</span>' : '<span class="pill" style="margin-left:6px;background:rgba(255,87,87,0.08);">Out of stock</span>'}
+            </div>
+          </div>
+        `;
+        gridEl.appendChild(div);
+      });
+    }
+
+    function renderOrders(queueEl, orders){
+      queueEl.innerHTML = '';
+      orders.forEach(o=>{
+        const div = document.createElement('div');
+        div.className='order-row';
+        div.innerHTML = `<div class="order-left"><div style="width:8px;height:8px;border-radius:50%;background:${o.platform==='Swiggy'? '#ff6f3c': o.platform==='Zomato'?'#ff4d4f':'#00aaff'}"></div>
+          <div style="margin-left:8px"><strong>${o.id}</strong><div class="muted" style="font-size:.85rem">${o.items.join(', ')}</div></div></div>
+          <div class="right"><div class="muted" style="font-size:.85rem">${o.eta}</div><div class="pill" style="margin-top:6px">${o.status}</div></div>`;
+        queueEl.appendChild(div);
+      });
+    }
+
+    function renderReviews(listEl, reviews){
+      listEl.innerHTML = '';
+      reviews.forEach(r=>{
+        const d = document.createElement('div');
+        d.className='review-card';
+        d.innerHTML = `
+          <img src="${r.photo}" alt="${r.name}">
+          <div style="flex:1">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div><strong>${r.name}</strong><div class="muted" style="font-size:.85rem">Rating: ${'★'.repeat(r.rating)}</div></div>
+              <div class="small muted">${new Date().toLocaleDateString()}</div>
+            </div>
+            <p style="margin:8px 0">${r.text}</p>
+            <div>${r.reply? `<div style="padding:8px;border-radius:8px;background:rgba(16,185,129,0.06)"><strong>Owner:</strong> ${r.reply}</div>` : ''}</div>
+            <div class="reply-box">
+              <input placeholder="Reply publicly..." data-id="${r.id}" />
+              <button class="ghost" data-action="reply" data-id="${r.id}">Reply</button>
+            </div>
+          </div>
+        `;
+        listEl.appendChild(d);
+      });
+    }
+
+    function renderPayouts(listEl, platform){
+      listEl.innerHTML='';
+      (samplePayouts[platform]||[]).forEach(p=>{
+        const row = document.createElement('div');
+        row.className='payout-row';
+        row.innerHTML = `<div>${p.id} • ${p.date}</div><div>₹ ${p.amount} • <span class="muted">${p.status}</span></div>`;
+        listEl.appendChild(row);
+      });
+    }
+
+    function renderOffers(listEl, offersArr){
+      listEl.innerHTML='';
+      offersArr.forEach(o=>{
+        const card = document.createElement('div');
+        card.className='offer-card';
+        const expiresIn = Math.max(0, o.expires - Date.now());
+        const mins = Math.floor(expiresIn/60000);
+        card.innerHTML = `<div>
+            <strong>${o.title}</strong>
+            <div class="muted" style="font-size:.85rem">${o.type} • ${o.platform}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="offer-expire" data-exp="${o.expires}" id="offer-${o.id}">${formatCountdown(o.expires)}</div>
+            <div style="margin-top:6px"><button class="ghost" data-id="${o.id}" data-action="del-offer">Remove</button></div>
+          </div>`;
+        listEl.appendChild(card);
+      });
+    }
+
+    /*********************************************
+     * Small features & interactions
+     *********************************************/
+    const menuGrid = $('#menuGrid');
+    const orderQueueEl = $('#orderQueue');
+    const reviewListEl = $('#reviewList');
+    const payoutListEl = $('#payoutList');
+    const offersListEl = $('#offersList');
+
+    renderMenu(menuGrid, sampleMenu);
+    renderOrders(orderQueueEl, sampleOrders);
+    renderReviews(reviewListEl, sampleReviews);
+    renderPayouts(payoutListEl, 'swiggy');
+    renderOffers(offersListEl, offers);
+
+    // menu search
+    $('#menu-search').addEventListener('input', e=>{
+      const q = e.target.value.toLowerCase();
+      renderMenu(menuGrid, sampleMenu.filter(it=>it.name.toLowerCase().includes(q)));
+    });
+
+    // menu add/edit/delete
+    $('#add-item-btn').addEventListener('click', ()=>{
+      const name = prompt('Dish name?');
+      if(!name) return;
+      const price = parseInt(prompt('Price (₹)?')||0,10);
+      const img = prompt('Image URL (or leave blank for placeholder):') || 'https://images.unsplash.com/photo-1604908176560-80f0b7ff3f78?auto=format&fit=crop&w=800&q=60';
+      const id = Date.now();
+      sampleMenu.push({ id, name, price, badge:'', img, available:true });
+      renderMenu(menuGrid, sampleMenu);
+    });
+
+    // menu actions (edit/delete)
+    menuGrid.addEventListener('click', e=>{
+      const act = e.target.closest('[data-action]');
+      if(!act) return;
+      const action = act.dataset.action;
+      const id = Number(act.dataset.id);
+      if(action==='del'){
+        if(confirm('Remove this item?')) {
+          const idx = sampleMenu.findIndex(x=>x.id===id);
+          if(idx>=0) sampleMenu.splice(idx,1);
+          renderMenu(menuGrid, sampleMenu);
+        }
+      } else if(action==='edit'){
+        const item = sampleMenu.find(x=>x.id===id);
+        if(!item) return;
+        const newName = prompt('Edit name', item.name) || item.name;
+        const newPrice = Number(prompt('Edit price', item.price) || item.price);
+        item.name = newName; item.price = newPrice;
+        renderMenu(menuGrid, sampleMenu);
+      }
+    });
+
+    // review reply
+    reviewListEl.addEventListener('click', e=>{
+      const btn = e.target.closest('[data-action="reply"]');
+      if(!btn) return;
+      const id = Number(btn.dataset.id);
+      const input = reviewListEl.querySelector(`input[data-id="${id}"]`);
+      if(!input) return;
+      const text = input.value.trim();
+      if(!text) return alert('Type a reply');
+      const rev = sampleReviews.find(r=>r.id===id);
+      if(rev) rev.reply = text;
+      renderReviews(reviewListEl, sampleReviews);
+    });
+
+    // payout tabs
+    $all('.tab').forEach(t => t.addEventListener('click', ()=>{
+      $all('.tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      const platform = t.dataset.platform;
+      renderPayouts(payoutListEl, platform);
+    }));
+
+    // remove offer
+    offersListEl.addEventListener('click', e=>{
+      const btn = e.target.closest('[data-action="del-offer"]');
+      if(!btn) return;
+      const id = Number(btn.dataset.id);
+      if(confirm('Remove this offer?')) {
+        offers = offers.filter(o=>o.id !== id);
+        renderOffers(offersListEl, offers);
+      }
+    });
+
+    // new offer
+    $('#new-offer-btn').addEventListener('click', ()=>{
+      const title = prompt('Offer title (e.g., Flat 20% Off - Dinner):');
+      if(!title) return;
+      const type = prompt('Type (Discount/BOGO/Free Item):','Discount');
+      const platform = prompt('Platform (Swiggy/Zomato/UberEats):','Swiggy');
+      const minutes = Number(prompt('Expires in how many minutes?', 60));
+      const id = Date.now();
+      offers.push({ id, title, type, platform, expires: Date.now() + minutes*60000 });
+      renderOffers(offersListEl, offers);
+    });
+
+    // Quick actions (dummy)
+    $('#sync-btn').addEventListener('click', ()=>alert('Menu synced to all platforms ✅'));
+    $('#settle-btn').addEventListener('click', ()=>alert('Settlement requested. Finance will contact you.'));
+    $('#export-btn').addEventListener('click', ()=>alert('CSV exported.'));
+
+    /*********************************************
+     * Animated counters
+     *********************************************/
+    function animateCounter(el){
+      const target = +el.dataset.target;
+      const speed = Math.max(20, Math.floor(1500/Math.log(target+10)));
+      let current = 0;
+      const step = Math.ceil(target/80);
+      function tick(){
+        current += step;
+        if(current >= target) { el.innerText = target; return; }
+        el.innerText = current;
+        requestAnimationFrame(()=>setTimeout(tick, speed));
+      }
+      tick();
+    }
+    window.addEventListener('load', ()=>{
+      $all('[data-target]').forEach(animateCounter);
+      $('#live-count').innerText = sampleOrders.length;
+      $('#last-updated').innerText = new Date().toLocaleTimeString();
+    });
+
+    /*********************************************
+     * Simple sparkline-like chart for daily sales
+     *********************************************/
+    function drawSparkline(canvas, data){
+      const ctx = canvas.getContext('2d');
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr,dpr);
+      ctx.clearRect(0,0,rect.width,rect.height);
+      // background grid
+      ctx.fillStyle = 'rgba(15,23,42,0.03)';
+      ctx.fillRect(0,0,rect.width,rect.height);
+      const max = Math.max(...data);
+      const min = Math.min(...data);
+      const padding = 8;
+      ctx.beginPath();
+      data.forEach((v,i)=>{
+        const x = padding + (i*(rect.width-2*padding)/(data.length-1));
+        const y = padding + ((max - v) * (rect.height-2*padding)/(max - min || 1));
+        if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      });
+      ctx.strokeStyle = 'rgba(255,111,60,0.95)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      // fill gradient
+      const grad = ctx.createLinearGradient(0,0,0,rect.height);
+      grad.addColorStop(0,'rgba(255,111,60,0.12)');
+      grad.addColorStop(1,'rgba(255,111,60,0.02)');
+      ctx.lineTo(rect.width-padding, rect.height);
+      ctx.lineTo(padding, rect.height);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+    const salesData = [1200,1500,1300,1600,1800,1700,2100,1900]; // sample
+    const salesCanvas = document.getElementById('salesCanvas');
+    drawSparkline(salesCanvas, salesData);
+
+    /*********************************************
+     * Orders queue updater (simulate incoming orders)
+     *********************************************/
+    function pushRandomOrder(){
+      const id = 'ORD-'+(1000 + Math.floor(Math.random()*9000));
+      const items = ['Margherita Pizza','Veg Biryani','Paneer Butter Masala','Caesar Salad'];
+      const choose = ()=> items[Math.floor(Math.random()*items.length)];
+      const platforms = ['Swiggy','Zomato','UberEats'];
+      const o = { id, items:[choose(),choose()], eta:`${10+Math.floor(Math.random()*25)} mins`, platform:platforms[Math.floor(Math.random()*platforms.length)], status:'accepted' };
+      sampleOrders.unshift(o);
+      if(sampleOrders.length>8) sampleOrders.pop();
+      renderOrders(orderQueueEl, sampleOrders);
+      $('#live-count').innerText = sampleOrders.length;
+      // increment counters
+      const ongoing = Number($('#stat-ongoing').innerText) + 1;
+      $('#stat-ongoing').innerText = ongoing;
+    }
+    setInterval(pushRandomOrder, 18_000); // every 18s a new order (simulation)
+
+    /*********************************************
+     * Offers countdown updater
+     *********************************************/
+    function formatCountdown(ts){
+      const delta = Math.max(0, ts - Date.now());
+      const hrs = Math.floor(delta/3600000);
+      const mins = Math.floor((delta%3600000)/60000);
+      const secs = Math.floor((delta%60000)/1000);
+      if(delta<=0) return 'Expired';
+      if(hrs>0) return `${hrs}h ${mins}m`;
+      if(mins>0) return `${mins}m ${secs}s`;
+      return `${secs}s`;
+    }
+    setInterval(()=>{
+      offers.forEach(o=>{
+        const el = document.getElementById(`offer-${o.id}`);
+        if(el) el.innerText = formatCountdown(o.expires);
+      });
+      // remove expired offers automatically
+      const expired = offers.filter(o=>o.expires <= Date.now());
+      if(expired.length){
+        offers = offers.filter(o=>o.expires > Date.now());
+        renderOffers(offersListEl, offers);
+      }
+    }, 1000);
+
+    /*********************************************
+     * Multilanguage switching
+     *********************************************/
+    function applyLang(code){
+      const dict = translations[code] || translations.en;
+      $('#page-title').innerText = dict.pageTitle;
+      $('#page-sub').innerText = dict.pageSub;
+      $('#orders-title').innerText = dict.ordersTitle;
+      $('#menu-title').innerText = dict.menuTitle;
+      $('#review-title').innerText = dict.reviewTitle;
+      $all('.tab').forEach(t=>t.textContent = t.dataset.platform.charAt(0).toUpperCase()+t.dataset.platform.slice(1));
+      // offers and payouts headers
+      // small dynamic texts (badges)
+      $('.badge').innerText = `${dict.liveOrders} • ${sampleOrders.length}`;
+      // new offer button
+      $('#new-offer-btn').innerText = dict.newOfferBtn;
+    }
+    $('#lang').addEventListener('change', e=>applyLang(e.target.value));
+    // init
+    applyLang('en');
+
+    /*********************************************
+     * Open/Close toggle
+     *********************************************/
+    const statusDot = $('#status-dot');
+    const statusLabel = $('#status-label');
+    let open = true;
+    $('.toggle-btn').addEventListener('click', ()=>{
+      open = !open;
+      statusDot.style.background = open? '#34d399' : '#fb7185';
+      statusLabel.innerText = open? 'Open' : 'Closed';
+    });
+
+    /*********************************************
+     * Ensure images load — fallback handler
+     *********************************************/
+    document.addEventListener('error', (e)=>{
+      const target = e.target;
+      if(target.tagName === 'IMG'){
+        target.src = 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=60';
+      }
+    }, true);
+
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Restaurant Owner Registration — SmartDine</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* (Your CSS stays exactly as given) */
+  :root{
+    --bg-a:#0ea5e9;
+    --bg-b:#7c3aed;
+    --accent-sky: #00e5ff;
+    --accent-orange: #ff9800;
+    --card-bg: rgba(255,255,255,0.08);
+    --glass-border: rgba(255,255,255,0.16);
+    --muted: rgba(255,255,255,0.9);
+    --radius: 16px;
+    --focus-glow: 0 10px 30px rgba(0,229,255,0.12);
+    --shadow: 0 20px 60px rgba(2,6,23,0.35);
+    color-scheme: light;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--muted);background:linear-gradient(120deg,var(--bg-a),var(--bg-b));background-size:300% 300%;animation:gradMove 18s linear infinite;}
+  @keyframes gradMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+  .bg-shapes{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .shape{position:absolute;border-radius:50%;filter:blur(36px);opacity:0.18;mix-blend-mode:screen;transform:translate3d(0,0,0);animation:floaty 10s ease-in-out infinite;}
+  .shape.s1{width:420px;height:420px;background:linear-gradient(180deg,rgba(255,255,255,0.14),transparent);left:-8%;top:6%}
+  .shape.s2{width:320px;height:320px;background:linear-gradient(180deg,rgba(255,200,120,0.09),transparent);right:-6%;bottom:6%;animation-duration:14s}
+  .shape.s3{width:240px;height:240px;background:linear-gradient(180deg,rgba(0,229,255,0.07),transparent);left:20%;bottom:12%;animation-duration:12s}
+  @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-18px)}100%{transform:translateY(0)}}
+
+  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;position:relative;z-index:1}
+  .card{width:100%;max-width:980px;border-radius:20px;padding:28px;background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03));backdrop-filter:blur(10px) saturate(140%);box-shadow:var(--shadow);border:1px solid var(--glass-border);position:relative;overflow:hidden;}
+
+  .lang-switch{position:absolute;top:18px;right:18px;z-index:10;display:flex;align-items:center;gap:8px}
+  .lang-btn{position:relative;display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background: linear-gradient(90deg,#ffffff,#ffe0b2);color:#1a1a1a;font-weight:700;border:none;cursor:pointer;box-shadow:0 8px 30px rgba(2,6,23,0.12);transition:transform .18s ease,box-shadow .18s ease;}
+  .lang-btn:active{transform:translateY(1px)}
+  .lang-select{border:none;background:transparent;font-weight:700;cursor:pointer;padding:6px 8px;font-size:14px;color:#1a1a1a;outline:none;}
+  .lang-select option{background:#fff;color:#222;font-weight:600;}
+  .lang-btn::before{content:"";position:absolute;inset:-2px;border-radius:14px;background:linear-gradient(90deg,var(--accent-orange),var(--accent-sky),#7e5bef);opacity:0;transition:opacity .28s ease;z-index:-1;filter:blur(8px);}
+  .lang-btn:hover{transform:translateY(-4px);box-shadow:0 18px 40px rgba(0,0,0,0.16)}
+  .lang-btn:hover::before{opacity:1}
+
+  .header{display:flex;align-items:center;gap:18px;margin-bottom:6px}
+  .logo{display:flex;flex-direction:column}
+  .brand{font-weight:800;font-size:20px;color:#fff}
+  .tag{font-size:12px;color:rgba(255,255,255,0.85)}
+
+  .intro{margin-top:6px;margin-bottom:18px}
+  .title{font-size:26px;font-weight:800;color:transparent;background:linear-gradient(90deg,#fff,#ffe0b2,#00e5ff);-webkit-background-clip:text}
+  .desc{margin-top:8px;color:rgba(255,255,255,0.92);font-size:14px}
+
+  form{display:grid;grid-template-columns:1fr;gap:14px;margin-top:18px}
+  @media(min-width:880px){form{grid-template-columns:repeat(2,1fr)}}
+  .full{grid-column:1/-1}
+  label{display:block;font-size:13px;color:rgba(255,255,255,0.95);margin-bottom:8px;font-weight:700}
+
+  input, select, textarea {
+    width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.18);
+    background:#fff;color:#222;outline:none;font-size:14px;font-weight:600;
+    transition:box-shadow .18s ease,transform .12s ease,border-color .18s ease;
+  }
+  textarea{min-height:110px;resize:vertical}
+  input:focus, select:focus, textarea:focus{border-color:var(--accent-orange);box-shadow:0 6px 26px rgba(255,152,0,0.25);transform:translateY(-2px);}
+  input:hover, select:hover, textarea:hover{border-color:var(--accent-sky);}
+  .select-wrap{position:relative}
+  .select-wrap::after{content:"▾";position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:12px;color:#222;opacity:0.85;pointer-events:none}
+
+  .checkboxes{display:flex;flex-wrap:wrap;gap:10px}
+  .chk{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:#fff;border:1px solid rgba(0,0,0,0.08);cursor:pointer;transition:transform .14s ease,box-shadow .18s}
+  .chk input{appearance:none;width:18px;height:18px;border-radius:6px;background:transparent;border:2px solid #888}
+  .chk input:checked{background:linear-gradient(90deg,var(--accent-sky),#7e5bef);border-color:transparent}
+  .chk span{font-size:13px;color:#222;font-weight:600}
+
+  .actions{display:flex;gap:12px;align-items:center;justify-content:flex-end;grid-column:1/-1;margin-top:8px}
+  .btn{padding:12px 18px;border-radius:12px;border:none;font-weight:800;cursor:pointer;color:#042b35;background:linear-gradient(90deg,#fff,#ffe0b2);box-shadow:0 12px 30px rgba(0,0,0,0.12);transition:transform .14s ease,box-shadow .2s ease;}
+  .btn:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff}
+
+  #preview-container{display:none;margin-top:18px;padding:18px;background:rgba(255,255,255,0.1);border-radius:12px;}
+  #preview-container h3{margin-top:0;}
+</style>
+</head>
+<body>
+  <div class="bg-shapes"><div class="shape s1"></div><div class="shape s2"></div><div class="shape s3"></div></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="lang-switch">
+        <button class="lang-btn">
+          🌐
+          <select id="language" class="lang-select">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी</option>
+            <option value="te">తెలుగు</option>
+            <option value="ta">தமிழ்</option>
+            <option value="kn">ಕನ್ನಡ</option>
+            <option value="ml">മലയാളം</option>
+          </select>
+        </button>
+      </div>
+
+      <div class="header">
+        <div class="logo">
+          <div class="brand">SmartDine</div>
+          <div class="tag" id="form-title">Restaurant Owner Registration</div>
+        </div>
+      </div>
+
+      <div class="intro">
+        <div class="title" id="intro-title">Register Your Restaurant</div>
+        <div class="desc" id="intro-desc">Fill in details so food lovers can discover your restaurant easily.</div>
+      </div>
+
+      <form id="restaurant-form">
+        <div class="full">
+          <label id="label-name">Restaurant Name</label>
+          <input id="name" type="text" placeholder="e.g., Spice Garden"/>
+        </div>
+
+        <div>
+          <label id="label-location">Restaurant Location</label>
+          <input id="location" type="text" placeholder="City, Area"/>
+        </div>
+
+        <div>
+          <label id="label-dishes">Famous Dishes</label>
+          <input id="dishes" type="text" placeholder="e.g., Biryani, Dosa"/>
+        </div>
+
+        <div>
+          <label id="label-cuisine">Type of Restaurant</label>
+          <div class="select-wrap">
+            <select id="cuisine">
+              <option>Casual Dining</option>
+              <option>Fine Dining</option>
+              <option>Cafe</option>
+              <option>Fast Food</option>
+              <option>Buffet</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label id="label-ambience">Main Features</label>
+          <div class="checkboxes">
+            <label class="chk"><input type="checkbox" name="ambience" value="Veg" id="amb1"/><span>Veg</span></label>
+            <label class="chk"><input type="checkbox" name="ambience" value="Non-Veg" id="amb2"/><span>Non-Veg</span></label>
+            <label class="chk"><input type="checkbox" name="ambience" value="Live Music" id="amb3"/><span>Live Music</span></label>
+            <label class="chk"><input type="checkbox" name="ambience" value="Home Delivery" id="amb4"/><span>Home Delivery</span></label>
+            <label class="chk"><input type="checkbox" name="ambience" value="Outdoor Seating" id="amb5"/><span>Outdoor Seating</span></label>
+            <label class="chk"><input type="checkbox" name="ambience" value="Parking" id="amb6"/><span>Parking</span></label>
+          </div>
+        </div>
+
+        <div>
+          <label id="label-email">Restaurant Email</label>
+          <input id="email" type="email" placeholder="you@restaurant.com"/>
+        </div>
+
+        <div>
+          <label id="label-phone">Phone Number</label>
+          <input id="phone" type="tel" placeholder="+91 98765 43210"/>
+        </div>
+
+        <div class="full">
+          <label id="label-website">Website / Delivery Link (optional)</label>
+          <input id="website" type="url" placeholder="https://example.com"/>
+        </div>
+
+        <div class="full">
+          <label id="label-notes">Additional Notes / Special Features</label>
+          <textarea id="notes" placeholder="e.g., Family-friendly, Rooftop"></textarea>
+        </div>
+
+        <div class="actions full">
+          <button type="button" class="btn secondary" id="preview-btn">Preview</button>
+          <button type="submit" class="btn" id="submit-btn">Submit</button>
+        </div>
+      </form>
+
+      <div id="preview-container">
+        <div id="preview-box"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const translations = {
+  en:{title:"Register Your Restaurant",desc:"Fill in details so food lovers can discover your restaurant easily.",
+    name:"Restaurant Name",location:"Restaurant Location",dishes:"Famous Dishes",cuisine:"Type of Restaurant",
+    ambience:"Main Features",veg:"Veg",nonveg:"Non-Veg",music:"Live Music",delivery:"Home Delivery",outdoor:"Outdoor Seating",parking:"Parking",
+    email:"Restaurant Email",phone:"Phone Number",website:"Website / Delivery Link",notes:"Additional Notes",submit:"Submit",preview:"Preview"},
+  hi:{title:"अपना रेस्टोरेंट पंजीकृत करें",desc:"विवरण भरें ताकि खाने वाले आसानी से आपका रेस्टोरेंट ढूंढ सकें।",
+    name:"रेस्टोरेंट का नाम",location:"रेस्टोरेंट का स्थान",dishes:"प्रसिद्ध व्यंजन",cuisine:"रेस्टोरेंट का प्रकार",
+    ambience:"मुख्य विशेषताएँ",veg:"शाकाहारी",nonveg:"मांसाहारी",music:"लाइव म्यूजिक",delivery:"होम डिलीवरी",outdoor:"आउटडोर सीटिंग",parking:"पार्किंग",
+    email:"रेस्टोरेंट ईमेल",phone:"फ़ोन नंबर",website:"वेबसाइट / डिलीवरी लिंक",notes:"अतिरिक्त नोट्स",submit:"जमा करें",preview:"पूर्वावलोकन"},
+  te:{title:"మీ రెస్టారెంట్‌ను నమోదు చేయండి",desc:"భోజన ప్రియులు సులభంగా కనుగొనగలిగేలా వివరాలను పూరించండి.",
+    name:"రెస్టారెంట్ పేరు",location:"రెస్టారెంట్ ప్రదేశం",dishes:"ప్రసిద్ధ వంటకాలు",cuisine:"రెస్టారెంట్ రకం",
+    ambience:"ప్రధాన ఫీచర్స్",veg:"శాకాహారి",nonveg:"మాంసాహారి",music:"లైవ్ మ్యూజిక్",delivery:"హోం డెలివరీ",outdoor:"ఔట్‌డోర్ సీటింగ్",parking:"పార్కింగ్",
+    email:"రెస్టారెంట్ ఇమెయిల్",phone:"ఫోన్ నంబర్",website:"వెబ్‌సైట్ / డెలివరీ లింక్",notes:"అదనపు గమనికలు",submit:"సమర్పించు",preview:"ప్రివ్యూ"},
+  ta:{title:"உங்கள் உணவகத்தை பதிவு செய்யுங்கள்",desc:"உணவுப் பிரியர்கள் எளிதாக கண்டுபிடிக்க விவரங்களை நிரப்புங்கள்.",
+    name:"உணவகத்தின் பெயர்",location:"உணவகத்தின் இடம்",dishes:"பிரபலமான உணவுகள்",cuisine:"உணவக வகை",
+    ambience:"முக்கிய அம்சங்கள்",veg:"சைவம்",nonveg:"அசைவம்",music:"நேரடி இசை",delivery:"வீட்டு டெலிவரி",outdoor:"வெளிப்புற அமர்வு",parking:"பார்கிங்",
+    email:"உணவக மின்னஞ்சல்",phone:"தொலைபேசி எண்",website:"வலைத்தளம் / டெலிவரி இணைப்பு",notes:"கூடுதல் குறிப்புகள்",submit:"சமர்ப்பிக்கவும்",preview:"முன்னோட்டம்"},
+  kn:{title:"ನಿಮ್ಮ ರೆಸ್ಟೋರೆಂಟ್ ನೋಂದಣಿ ಮಾಡಿ",desc:"ಭೋಜನ ಪ್ರಿಯರು ಸುಲಭವಾಗಿ ಕಂಡುಹಿಡಿಯಲು ವಿವರಗಳನ್ನು ಭರ್ತಿ ಮಾಡಿ.",
+    name:"ರೆಸ್ಟೋರೆಂಟ್ ಹೆಸರು",location:"ರೆಸ್ಟೋರೆಂಟ್ ಸ್ಥಳ",dishes:"ಪ್ರಸಿದ್ಧ ತಿನಿಸುಗಳು",cuisine:"ರೆಸ್ಟೋರೆಂಟ್ ಪ್ರಕಾರ",
+    ambience:"ಮುಖ್ಯ ವೈಶಿಷ್ಟ್ಯಗಳು",veg:"ಶಾಕಾಹಾರಿ",nonveg:"ಮಾಂಸಾಹಾರಿ",music:"ಲೈವ್ ಮ್ಯೂಸಿಕ್",delivery:"ಹೋಮ್ ಡೆಲಿವರಿ",outdoor:"ಔಟ್ಡೋರ್ ಸೀಟಿಂಗ್",parking:"ಪಾರ್ಕಿಂಗ್",
+    email:"ರೆಸ್ಟೋರೆಂಟ್ ಇಮೇಲ್",phone:"ಫೋನ್ ನಂಬರ",website:"ವೆಬ್‌ಸೈಟ್ / ಡೆಲಿವರಿ ಲಿಂಕ್",notes:"ಹೆಚ್ಚುವರಿ ಟಿಪ್ಪಣಿ",submit:"ಸಲ್ಲಿಸು",preview:"ಪೂರ್ವದೃಶ್ಯ"},
+  ml:{title:"നിങ്ങളുടെ റെസ്റ്റോറന്റ് രജിസ്റ്റർ ചെയ്യുക",desc:"ഭക്ഷണപ്രിയർക്ക് എളുപ്പത്തിൽ കണ്ടെത്താൻ വിവരങ്ങൾ പൂരിപ്പിക്കുക.",
+    name:"റെസ്റ്റോറന്റ് പേര്",location:"റെസ്റ്റോറന്റ് സ്ഥലം",dishes:"പ്രസിദ്ധമായ വിഭവങ്ങൾ",cuisine:"റെസ്റ്റോറന്റ് തരം",
+    ambience:"പ്രധാന സവിശേഷതകൾ",veg:"സസ്യാഹാരം",nonveg:"അസസ്യാഹാരം",music:"ലൈവ് മ്യൂസിക്",delivery:"ഹോം ഡെലിവറി",outdoor:"ഔട്ട്ഡോർ സീറ്റിംഗ്",parking:"പാർക്കിംഗ്",
+    email:"റെസ്റ്റോറന്റ് ഇമെയിൽ",phone:"ഫോൺ നമ്പർ",website:"വെബ്സൈറ്റ് / ഡെലിവറി ലിങ്ക്",notes:"കൂടുതൽ കുറിപ്പുകൾ",submit:"സമർപ്പിക്കുക",preview:"പ്രിവ്യൂ"}
+};
+
+function changeLanguage(lang){
+  const t=translations[lang];
+  document.getElementById("intro-title").textContent=t.title;
+  document.getElementById("intro-desc").textContent=t.desc;
+  document.getElementById("label-name").textContent=t.name;
+  document.getElementById("label-location").textContent=t.location;
+  document.getElementById("label-dishes").textContent=t.dishes;
+  document.getElementById("label-cuisine").textContent=t.cuisine;
+  document.getElementById("label-ambience").textContent=t.ambience;
+  document.querySelector('#amb1+span').textContent=t.veg;
+  document.querySelector('#amb2+span').textContent=t.nonveg;
+  document.querySelector('#amb3+span').textContent=t.music;
+  document.querySelector('#amb4+span').textContent=t.delivery;
+  document.querySelector('#amb5+span').textContent=t.outdoor;
+  document.querySelector('#amb6+span').textContent=t.parking;
+  document.getElementById("label-email").textContent=t.email;
+  document.getElementById("label-phone").textContent=t.phone;
+  document.getElementById("label-website").textContent=t.website;
+  document.getElementById("label-notes").textContent=t.notes;
+  document.getElementById("submit-btn").textContent=t.submit;
+  document.getElementById("preview-btn").textContent=t.preview;
+}
+
+document.getElementById("language").addEventListener("change",e=>changeLanguage(e.target.value));
+document.addEventListener("DOMContentLoaded",()=>changeLanguage("en"));
+
+document.getElementById("preview-btn").addEventListener("click",()=>{
+  const lang=document.getElementById("language").value;
+  const t=translations[lang];
+  document.getElementById("preview-box").innerHTML=`
+    <h3>${t.preview}</h3>
+    <p><b>${t.name}:</b> ${document.getElementById("name").value}</p>
+    <p><b>${t.location}:</b> ${document.getElementById("location").value}</p>
+    <p><b>${t.dishes}:</b> ${document.getElementById("dishes").value}</p>
+    <p><b>${t.cuisine}:</b> ${document.getElementById("cuisine").value}</p>
+    <p><b>${t.ambience}:</b> ${[...document.querySelectorAll('input[name="ambience"]:checked')].map(el=>el.nextElementSibling.textContent).join(", ")}</p>
+    <p><b>${t.email}:</b> ${document.getElementById("email").value}</p>
+    <p><b>${t.phone}:</b> ${document.getElementById("phone").value}</p>
+    <p><b>${t.website}:</b> ${document.getElementById("website").value}</p>
+    <p><b>${t.notes}:</b> ${document.getElementById("notes").value}</p>`;
+  document.getElementById("preview-container").style.display="block";
+});
+
+document.getElementById("restaurant-form").addEventListener("submit",e=>{
+  e.preventDefault();
+  alert("Form submitted!");
+});
+</script>
+</body>
+</html>
+

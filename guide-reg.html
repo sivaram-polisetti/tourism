@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Tourist Guide Registration — SmartTour</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ✅ Keeping your same CSS */
+  :root{
+    --bg-a:#0ea5e9;
+    --bg-b:#7c3aed;
+    --accent-sky: #00e5ff;
+    --accent-orange: #ff9800;
+    --card-bg: rgba(255,255,255,0.08);
+    --glass-border: rgba(255,255,255,0.16);
+    --muted: rgba(255,255,255,0.9);
+    --radius: 16px;
+    --focus-glow: 0 10px 30px rgba(0,229,255,0.12);
+    --shadow: 0 20px 60px rgba(2,6,23,0.35);
+    color-scheme: light;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--muted);background:linear-gradient(120deg,var(--bg-a),var(--bg-b));background-size:300% 300%;animation:gradMove 18s linear infinite;}
+  @keyframes gradMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+  .bg-shapes{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .shape{position:absolute;border-radius:50%;filter:blur(36px);opacity:0.18;mix-blend-mode:screen;transform:translate3d(0,0,0);animation:floaty 10s ease-in-out infinite;}
+  .shape.s1{width:420px;height:420px;background:linear-gradient(180deg,rgba(255,255,255,0.14),transparent);left:-8%;top:6%}
+  .shape.s2{width:320px;height:320px;background:linear-gradient(180deg,rgba(255,200,120,0.09),transparent);right:-6%;bottom:6%;animation-duration:14s}
+  .shape.s3{width:240px;height:240px;background:linear-gradient(180deg,rgba(0,229,255,0.07),transparent);left:20%;bottom:12%;animation-duration:12s}
+  @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-18px)}100%{transform:translateY(0)}}
+
+  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;position:relative;z-index:1}
+  .card{width:100%;max-width:980px;border-radius:20px;padding:28px;background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03));backdrop-filter:blur(10px) saturate(140%);box-shadow:var(--shadow);border:1px solid var(--glass-border);position:relative;overflow:hidden;}
+
+  .header{display:flex;align-items:center;gap:18px;margin-bottom:6px}
+  .logo{display:flex;flex-direction:column}
+  .brand{font-weight:800;font-size:20px;color:#fff}
+  .tag{font-size:12px;color:rgba(255,255,255,0.85)}
+
+  .intro{margin-top:6px;margin-bottom:18px}
+  .title{font-size:26px;font-weight:800;color:transparent;background:linear-gradient(90deg,#fff,#ffe0b2,#00e5ff);-webkit-background-clip:text}
+  .desc{margin-top:8px;color:rgba(255,255,255,0.92);font-size:14px}
+
+  form{display:grid;grid-template-columns:1fr;gap:14px;margin-top:18px}
+  @media(min-width:880px){form{grid-template-columns:repeat(2,1fr)}}
+  .full{grid-column:1/-1}
+  label{display:block;font-size:13px;color:rgba(255,255,255,0.95);margin-bottom:8px;font-weight:700}
+
+  input, select, textarea {
+    width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.18);
+    background:#fff;color:#222;outline:none;font-size:14px;font-weight:600;
+    transition:box-shadow .18s ease,transform .12s ease,border-color .18s ease;
+  }
+  textarea{min-height:110px;resize:vertical}
+  input:focus, select:focus, textarea:focus{border-color:var(--accent-orange);box-shadow:0 6px 26px rgba(255,152,0,0.25);transform:translateY(-2px);}
+  input:hover, select:hover, textarea:hover{border-color:var(--accent-sky);}
+
+  .checkboxes{display:flex;flex-wrap:wrap;gap:10px}
+  .chk{display:inline-flex;align-items:center;gap:10px;padding:8px 12px;border-radius:12px;background:#fff;border:1px solid rgba(0,0,0,0.08);cursor:pointer;transition:transform .14s ease,box-shadow .18s}
+  .chk input{appearance:none;width:18px;height:18px;border-radius:6px;background:transparent;border:2px solid #888}
+  .chk input:checked{background:linear-gradient(90deg,var(--accent-sky),#7e5bef);border-color:transparent}
+  .chk span{font-size:13px;color:#222;font-weight:600}
+
+  .actions{display:flex;gap:12px;align-items:center;justify-content:flex-end;grid-column:1/-1;margin-top:8px}
+  .btn{padding:12px 18px;border-radius:12px;border:none;font-weight:800;cursor:pointer;color:#042b35;background:linear-gradient(90deg,#fff,#ffe0b2);box-shadow:0 12px 30px rgba(0,0,0,0.12);transition:transform .14s ease,box-shadow .2s ease;}
+  .btn:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff}
+
+  #preview-container{display:none;margin-top:18px;padding:18px;background:rgba(255,255,255,0.1);border-radius:12px;}
+  #preview-container h3{margin-top:0;}
+</style>
+</head>
+<body>
+  <div class="bg-shapes"><div class="shape s1"></div><div class="shape s2"></div><div class="shape s3"></div></div>
+  <div class="wrap">
+    <div class="card">
+      <div class="header">
+        <div class="logo">
+          <div class="brand">SmartTour</div>
+          <div class="tag" id="form-title" data-translate="tag">Tourist Guide Registration</div>
+        </div>
+        <select id="lang-select" style="margin-left:auto;padding:6px 10px;border-radius:8px;">
+          <option value="en">English</option>
+          <option value="hi">हिन्दी</option>
+          <option value="te">తెలుగు</option>
+          <option value="ta">தமிழ்</option>
+          <option value="kn">ಕನ್ನಡ</option>
+          <option value="ml">മലയാളം</option>
+        </select>
+      </div>
+
+      <div class="intro">
+        <div class="title" id="intro-title" data-translate="title">Register as a Tourist Guide</div>
+        <div class="desc" id="intro-desc" data-translate="desc">Fill in your details so travelers can connect with you easily.</div>
+      </div>
+
+      <form id="guide-form">
+        <div class="full">
+          <label data-translate="fullname">Full Name</label>
+          <input id="name" type="text" placeholder="e.g., Ramesh Kumar"/>
+        </div>
+
+        <div>
+          <label data-translate="location">Base Location / City</label>
+          <input id="location" type="text" placeholder="e.g., Hyderabad, Jaipur"/>
+        </div>
+
+        <div>
+          <label data-translate="experience">Experience (in years)</label>
+          <input id="experience" type="number" placeholder="e.g., 5"/>
+        </div>
+
+        <div>
+          <label data-translate="charges">Charges</label>
+          <input id="charges" type="text" placeholder="e.g., ₹2000/day or ₹300/hour"/>
+        </div>
+
+        <div class="full">
+          <label data-translate="languages">Languages You Know</label>
+          <div class="checkboxes" id="lang-checkboxes">
+            <label class="chk"><input type="checkbox" value="English"/><span>English</span></label>
+            <label class="chk"><input type="checkbox" value="Hindi"/><span>Hindi</span></label>
+            <label class="chk"><input type="checkbox" value="Telugu"/><span>Telugu</span></label>
+            <label class="chk"><input type="checkbox" value="Tamil"/><span>Tamil</span></label>
+            <label class="chk"><input type="checkbox" value="Kannada"/><span>Kannada</span></label>
+            <label class="chk"><input type="checkbox" value="Malayalam"/><span>Malayalam</span></label>
+          </div>
+        </div>
+
+        <div class="full">
+          <label data-translate="places">Regional Places Covered</label>
+          <textarea id="places" placeholder="e.g., Charminar, Golconda Fort, Hussain Sagar"></textarea>
+        </div>
+
+        <div>
+          <label data-translate="email">Email</label>
+          <input id="email" type="email" placeholder="you@email.com"/>
+        </div>
+
+        <div>
+          <label data-translate="phone">Phone Number</label>
+          <input id="phone" type="tel" placeholder="+91 98765 43210"/>
+        </div>
+
+        <div class="full">
+          <label data-translate="notes">Additional Notes</label>
+          <textarea id="notes" placeholder="e.g., Special expertise in heritage tours, adventure treks"></textarea>
+        </div>
+
+        <div class="actions full">
+          <button type="button" class="btn secondary" id="preview-btn" data-translate="preview">Preview</button>
+          <button type="submit" class="btn" data-translate="submit">Submit</button>
+        </div>
+      </form>
+
+      <div id="preview-container">
+        <div id="preview-box"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+const translations = {
+  en:{tag:"Tourist Guide Registration",title:"Register as a Tourist Guide",desc:"Fill in your details so travelers can connect with you easily.",
+      fullname:"Full Name",location:"Base Location / City",experience:"Experience (in years)",charges:"Charges",
+      languages:"Languages You Know",places:"Regional Places Covered",email:"Email",phone:"Phone Number",notes:"Additional Notes",
+      preview:"Preview",submit:"Submit"},
+  hi:{tag:"पर्यटक गाइड पंजीकरण",title:"पर्यटक गाइड के रूप में पंजीकरण करें",desc:"अपनी जानकारी भरें ताकि यात्री आसानी से आपसे जुड़ सकें।",
+      fullname:"पूरा नाम",location:"आधार स्थान / शहर",experience:"अनुभव (सालों में)",charges:"शुल्क",
+      languages:"आपकी ज्ञात भाषाएँ",places:"कवर किए गए क्षेत्रीय स्थान",email:"ईमेल",phone:"फ़ोन नंबर",notes:"अतिरिक्त नोट्स",
+      preview:"पूर्वावलोकन",submit:"जमा करें"},
+  te:{tag:"టూరిస్ట్ గైడ్ రిజిస్ట్రేషన్",title:"టూరిస్ట్ గైడ్‌గా రిజిస్టర్ అవ్వండి",desc:"ప్రయాణికులు మీతో సులభంగా కలవడానికి మీ వివరాలు నమోదు చేయండి.",
+      fullname:"పూర్తి పేరు",location:"ప్రాంతం / నగరం",experience:"అనుభవం (సంవత్సరాలు)",charges:"చార్జీలు",
+      languages:"మీకు తెలిసిన భాషలు",places:"మీరు చూపే ప్రదేశాలు",email:"ఇమెయిల్",phone:"ఫోన్ నంబర్",notes:"అదనపు సమాచారం",
+      preview:"ప్రివ్యూ",submit:"సమర్పించు"},
+  ta:{tag:"சுற்றுலா வழிகாட்டி பதிவு",title:"சுற்றுலா வழிகாட்டியாக பதிவு செய்யவும்",desc:"பயணிகள் உங்களை எளிதில் தொடர்பு கொள்ள உங்கள் விவரங்களை நிரப்பவும்.",
+      fullname:"முழு பெயர்",location:"அடிப்படை இடம் / நகரம்",experience:"அனுபவம் (ஆண்டுகளில்)",charges:"கட்டணங்கள்",
+      languages:"உங்களுக்கு தெரிந்த மொழிகள்",places:"நீங்கள் காட்டும் இடங்கள்",email:"மின்னஞ்சல்",phone:"தொலைபேசி எண்",notes:"கூடுதல் குறிப்புகள்",
+      preview:"முன்னோட்டம்",submit:"சமர்ப்பிக்கவும்"},
+  kn:{tag:"ಪರ್ಯಟಕ ಮಾರ್ಗದರ್ಶಿ ನೋಂದಣಿ",title:"ಪರ್ಯಟಕ ಮಾರ್ಗದರ್ಶಿಯಾಗಿ ನೋಂದಾಯಿಸಿ",desc:"ಪ್ರವಾಸಿಗರು ನಿಮ್ಮನ್ನು ಸುಲಭವಾಗಿ ಸಂಪರ್ಕಿಸಲು ನಿಮ್ಮ ವಿವರಗಳನ್ನು ತುಂಬಿ.",
+      fullname:"ಪೂರ್ಣ ಹೆಸರು",location:"ಆಧಾರ ಸ್ಥಳ / ನಗರ",experience:"ಅನುಭವ (ವರ್ಷಗಳಲ್ಲಿ)",charges:"ಶುಲ್ಕ",
+      languages:"ನೀವು ತಿಳಿದಿರುವ ಭಾಷೆಗಳು",places:"ನೀವು ತೋರಿಸುವ ಸ್ಥಳಗಳು",email:"ಇಮೇಲ್",phone:"ಫೋನ್ ಸಂಖ್ಯೆ",notes:"ಹೆಚ್ಚುವರಿ ಟಿಪ್ಪಣಿಗಳು",
+      preview:"ಪೂರ್ವಾವಲೋಕನ",submit:"ಸಲ್ಲಿಸು"},
+  ml:{tag:"ടൂറിസ്റ്റ് ഗൈഡ് രജിസ്ട്രേഷൻ",title:"ടൂറിസ്റ്റ് ഗൈഡായി രജിസ്റ്റർ ചെയ്യുക",desc:"യാത്രക്കാർക്ക് നിങ്ങളുമായി എളുപ്പത്തിൽ ബന്ധപ്പെടാൻ നിങ്ങളുടെ വിവരങ്ങൾ നൽകുക.",
+      fullname:"പൂർണ്ണ നാമം",location:"അടിസ്ഥാന സ്ഥലം / നഗരം",experience:"അനുഭവം (വർഷങ്ങളിൽ)",charges:"ചാർജുകൾ",
+      languages:"നിങ്ങൾ അറിയുന്ന ഭാഷകൾ",places:"നിങ്ങൾ കാണിക്കുന്ന സ്ഥലങ്ങൾ",email:"ഇമെയിൽ",phone:"ഫോൺ നമ്പർ",notes:"അധിക കുറിപ്പുകൾ",
+      preview:"പ്രിവ്യൂ",submit:"സമർപ്പിക്കുക"}
+};
+
+document.getElementById("lang-select").addEventListener("change", function(){
+  const lang=this.value;
+  document.querySelectorAll("[data-translate]").forEach(el=>{
+    const key=el.getAttribute("data-translate");
+    if(translations[lang][key]) el.innerText=translations[lang][key];
+  });
+});
+
+document.getElementById("preview-btn").addEventListener("click", function(){
+  const previewBox = document.getElementById("preview-box");
+  const langs = [...document.querySelectorAll('input[type="checkbox"]:checked')].map(el=>el.value).join(", ");
+  previewBox.innerHTML = `
+      <h3>Preview</h3>
+      <p><b>Name:</b> ${document.getElementById("name").value}</p>
+      <p><b>Location:</b> ${document.getElementById("location").value}</p>
+      <p><b>Experience:</b> ${document.getElementById("experience").value} years</p>
+      <p><b>Charges:</b> ${document.getElementById("charges").value}</p>
+      <p><b>Languages:</b> ${langs}</p>
+      <p><b>Places Covered:</b> ${document.getElementById("places").value}</p>
+      <p><b>Email:</b> ${document.getElementById("email").value}</p>
+      <p><b>Phone:</b> ${document.getElementById("phone").value}</p>
+      <p><b>Notes:</b> ${document.getElementById("notes").value}</p>
+  `;
+  document.getElementById("preview-container").style.display="block";
+});
+
+document.getElementById("guide-form").addEventListener("submit", function(e){
+  e.preventDefault();
+  alert("Guide Registration Submitted!");
+});
+</script>
+</body>
+</html>
+

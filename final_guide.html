@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tourist Guide Registration</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --sky-50: #f0f9ff;
+      --sky-100: #e0f2fe;
+      --sky-200: #bae6fd;
+      --sky-400: #38bdf8;
+      --sky-500: #0ea5e9;
+      --glass: rgba(255,255,255,0.55);
+    }
+
+    body { font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; }
+
+    @keyframes floaty { 0%{ transform: translateY(0px);} 50%{ transform: translateY(-6px);} 100%{ transform: translateY(0px);} }
+
+    .ripple:after {
+      content: '';
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: rgba(255,255,255,0.25);
+      display: block;
+      opacity: 0;
+      pointer-events: none;
+      border-radius: 9999px;
+      transform: scale(1);
+      transition: transform 0.6s, opacity 1s;
+    }
+    .ripple:active:after{ transform: scale(40); opacity: 1; transition: 0s; }
+
+    .glass {
+      background: linear-gradient(135deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.35) 100%);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .focus-glow:focus{ box-shadow: 0 6px 20px rgba(14,165,233,0.12); }
+
+    /* Custom style for language dropdown */
+    .language-box {
+      background: var(--sky-50);
+      border: 1px solid var(--sky-200);
+      border-radius: 0.75rem;
+      padding: 0.5rem;
+      transition: all 0.3s ease;
+    }
+    .language-box:hover {
+      background: var(--sky-100);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.3);
+      transform: scale(1.01);
+    }
+    .language-box select {
+      background: transparent;
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 0.95rem;
+      color: #0369a1;
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-sky-50 via-white to-sky-100 flex items-center justify-center p-6">
+
+  <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+
+    <div class="px-6 py-8 rounded-2xl glass shadow-xl animate-[floaty_6s_ease-in-out_infinite]">
+      <div class="flex items-center gap-3">
+        <div class="bg-gradient-to-r from-sky-400 to-sky-500 p-3 rounded-lg shadow-md">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 2l3 7h6l-5 4 2 7-6-4-6 4 2-7-5-4h6l3-7z"></path></svg>
+        </div>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-semibold text-sky-700">Tourist Guide Registration</h1>
+          <p class="text-sm text-sky-600 mt-1">Become a certified guide and connect with travelers worldwide.</p>
+        </div>
+      </div>
+      <div class="mt-6 text-sky-700/90">
+        <p class="mb-4">Join our trusted network of local guides. Create a profile, list your specialities, and choose when you're available — travelers will find and book you.</p>
+        <ul class="space-y-2 text-sm">
+          <li class="flex items-start gap-2"><span class="text-sky-500">•</span> Verified profiles & secure contact</li>
+          <li class="flex items-start gap-2"><span class="text-sky-500">•</span> Flexible scheduling and easy onboarding</li>
+          <li class="flex items-start gap-2"><span class="text-sky-500">•</span> Showcase your languages & expertise</li>
+        </ul>
+      </div>
+      <div class="mt-8">
+        <img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=8f0e5b58b7dcebc3fcae9b454d6a0c3e" alt="travel" class="w-full rounded-xl shadow-md object-cover h-56 md:h-72" />
+      </div>
+    </div>
+
+    <div class="px-6 py-8 bg-white/70 glass rounded-2xl shadow-2xl">
+      <form id="regForm" class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-medium text-sky-700">Full Name</label>
+            <input required type="text" id="name" class="mt-1 w-full rounded-lg border border-sky-100 px-4 py-2 focus:outline-none focus-glow transition transform hover:scale-[1.01]" placeholder="e.g. Ravi Kumar">
+          </div>
+          <div>
+            <label class="text-sm font-medium text-sky-700">Age</label>
+            <input required type="number" id="age" min="18" class="mt-1 w-full rounded-lg border border-sky-100 px-4 py-2 focus:outline-none focus-glow transition transform hover:scale-[1.01]" placeholder="18+">
+          </div>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-sky-700">Gender</label>
+          <div class="mt-2 flex items-center gap-4">
+            <label class="inline-flex items-center gap-2"><input required type="radio" name="gender" value="Male"> <span class="text-sm">Male</span></label>
+            <label class="inline-flex items-center gap-2"><input required type="radio" name="gender" value="Female"> <span class="text-sm">Female</span></label>
+            <label class="inline-flex items-center gap-2"><input required type="radio" name="gender" value="Other"> <span class="text-sm">Other</span></label>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-medium text-sky-700">Email Address</label>
+            <input required id="email" type="email" class="mt-1 w-full rounded-lg border border-sky-100 px-4 py-2 focus:outline-none focus-glow transition transform hover:scale-[1.01]" placeholder="you@example.com">
+          </div>
+          <div>
+            <label class="text-sm font-medium text-sky-700">Phone Number</label>
+            <input required id="phone" type="tel" pattern="[0-9+\- ]{7,15}" class="mt-1 w-full rounded-lg border border-sky-100 px-4 py-2 focus:outline-none focus-glow transition transform hover:scale-[1.01]" placeholder="+91 98765 43210">
+          </div>
+        </div>
+        <div class="language-box">
+          <label class="text-sm font-medium text-sky-700">Languages Spoken</label>
+          <select id="languages" multiple>
+            <option>English</option>
+            <option>Hindi</option>
+            <option>Telugu</option>
+            <option>Tamil</option>
+            <option>Kannada</option>
+            <option>Marathi</option>
+          </select>
+          <p class="text-xs text-sky-600 mt-1">Hold Ctrl / Cmd to select multiple</p>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-medium text-sky-700">Years of Experience</label>
+            <input id="exp" type="number" min="0" class="mt-1 w-full rounded-lg border border-sky-100 px-4 py-2 focus:outline-none focus-glow transition transform hover:scale-[1.01]" placeholder="e.g. 3">
+          </div>
+          <div>
+            <label class="text-sm font-medium text-sky-700">Preferred Location / City</label>
+            <select id="city" class="mt-1 w-full rounded-lg border border-sky-100 px-3 py-2 focus:outline-none focus-glow transition transform hover:scale-[1.01]">
+              <option value="">Select city</option>
+              <option>Hyderabad</option>
+              <option>Delhi</option>
+              <option>Mumbai</option>
+              <option>Bengaluru</option>
+              <option>Chennai</option>
+              <option>Kolkata</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="text-sm font-medium text-sky-700">Specialization</label>
+          <div class="mt-2 grid grid-cols-2 gap-2 text-sm">
+            <label><input type="checkbox" value="Adventure Tours"> Adventure Tours</label>
+            <label><input type="checkbox" value="Historical Tours"> Historical Tours</label>
+            <label><input type="checkbox" value="Wildlife Tours"> Wildlife Tours</label>
+            <label><input type="checkbox" value="City Tours"> City Tours</label>
+            <label><input type="checkbox" value="Food & Culture"> Food & Culture</label>
+            <label><input type="checkbox" value="Religious Sites"> Religious Sites</label>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="text-sm font-medium text-sky-700">Available From</label>
+            <input id="available_date" type="date" class="mt-1 w-full rounded-lg border border-sky-100 px-3 py-2 focus:outline-none focus-glow transition transform hover:scale-[1.01]">
+          </div>
+          <div>
+            <label class="text-sm font-medium text-sky-700">Profile Picture</label>
+            <input id="photo" type="file" accept="image/*" class="mt-1 block w-full text-sm text-sky-600">
+            <div id="preview" class="mt-2 w-28 h-28 rounded-lg overflow-hidden border border-sky-100 bg-white/60 flex items-center justify-center">
+              <span class="text-xs text-sky-500">No image</span>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center">
+          <div>
+            <label class="text-sm font-medium text-sky-700">Password</label>
+            <input id="password" type="password" class="mt-1 w-full rounded-lg border border-sky-100 px-4 py-2 focus:outline-none focus-glow transition transform hover:scale-[1.01]" placeholder="Create a strong password">
+            <label class="text-sm font-medium text-sky-700 mt-3 block">Confirm Password</label>
+            <input id="confirm_password" type="password" class="mt-1 w-full rounded-lg border border-sky-100 px-4 py-2 focus:outline-none focus-glow transition transform hover:scale-[1.01]" placeholder="Repeat password">
+            <p id="pwMsg" class="text-xs mt-2"></p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="submitBtn" type="submit" class="relative overflow-hidden ripple inline-flex items-center justify-center gap-2 px-6 py-2 rounded-full font-semibold shadow-md transition-transform transform hover:-translate-y-0.5 active:scale-95" style="background: linear-gradient(90deg,var(--sky-400),var(--sky-500)); color: white;">
+            <span>Submit Application</span>
+          </button>
+          <button id="resetBtn" type="button" class="px-4 py-2 rounded-full bg-white border border-sky-100 shadow-sm text-sky-600 hover:scale-105 transition">Reset</button>
+        </div>
+        <p class="text-sm text-center text-sky-600">Already registered? <a href="#" class="text-sky-700 font-medium hover:underline">Login here</a></p>
+      </form>
+    </div>
+  </div>
+
+  <div id="successModal" class="fixed inset-0 bg-sky-900/30 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-md w-full p-6 text-center">
+      <h3 class="text-xl font-semibold text-sky-700 mb-2">Registration Submitted!</h3>
+      <p class="text-sky-600 mb-4">Thank you — your profile will be reviewed and verified.</p>
+      <button id="closeModal" class="px-5 py-2 rounded-full bg-sky-500 text-white font-semibold hover:scale-105 transition">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const photo = document.getElementById('photo');
+    const preview = document.getElementById('preview');
+    photo.addEventListener('change', () => {
+      const file = photo.files[0];
+      if (!file) { preview.innerHTML = '<span class="text-xs text-sky-500">No image</span>'; return; }
+      const img = document.createElement('img');
+      img.src = URL.createObjectURL(file);
+      img.className = 'object-cover w-full h-full';
+      preview.innerHTML = '';
+      preview.appendChild(img);
+    });
+
+    const password = document.getElementById('password');
+    const confirm_password = document.getElementById('confirm_password');
+    const pwMsg = document.getElementById('pwMsg');
+    function checkPass(){
+      if (!password.value && !confirm_password.value){ pwMsg.textContent = ''; return; }
+      if (password.value === confirm_password.value){ pwMsg.textContent = 'Passwords match ✓'; pwMsg.style.color = '#059669'; }
+      else { pwMsg.textContent = 'Passwords do not match'; pwMsg.style.color = '#dc2626'; }
+    }
+    password.addEventListener('input', checkPass);
+    confirm_password.addEventListener('input', checkPass);
+
+    const form = document.getElementById('regForm');
+    const modal = document.getElementById('successModal');
+    const closeModal = document.getElementById('closeModal');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const age = parseInt(document.getElementById('age').value || '0', 10);
+      const email = document.getElementById('email');
+      const phone = document.getElementById('phone');
+      if (isNaN(age) || age < 18){ alert('You must be 18 or older to register.'); return; }
+      if (!email.checkValidity()){ alert('Please enter a valid email address.'); return; }
+      if (!phone.checkValidity()){ alert('Please enter a valid phone number.'); return; }
+      if (password.value !== confirm_password.value){ alert('Passwords do not match.'); return; }
+      if (password.value.length < 6){ alert('Password should be at least 6 characters.'); return; }
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    });
+
+    closeModal.addEventListener('click', () => { modal.classList.add('hidden'); modal.classList.remove('flex'); form.reset(); preview.innerHTML = '<span class="text-xs text-sky-500">No image

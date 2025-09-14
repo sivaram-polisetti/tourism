@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tourist Guide — Portfolio</title>
+  <meta name="description" content="Professional tourist guide portfolio — places covered, reviews, awards, languages, gallery and booking." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1724; --card:#0b1220; --muted:#9aa4b2; --accent1:#ff7a59; --accent2:#ffd166;
+      --glass: rgba(255,255,255,0.04);
+      --radius:14px; --gap:18px; --maxw:1200px;
+      --ease:cubic-bezier(.2,.9,.3,1);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
+      background:linear-gradient(180deg,#071024 0%, #071827 60%);color:#e6eef6;line-height:1.45;
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    }
+    .container{max-width:var(--maxw);margin:0 auto;padding:28px}
+
+    /* HERO */
+    .hero{min-height:70vh;display:grid;grid-template-columns:1fr 420px;gap:32px;align-items:center}
+    .hero-left{padding:28px}
+    .eyebrow{color:var(--accent2);font-weight:600;letter-spacing:1px}
+    h1{font-size:clamp(28px,4vw,44px);margin:.35em 0}
+    p.lead{color:var(--muted);max-width:56ch}
+    .cta-row{display:flex;gap:12px;margin-top:18px}
+    .btn{background:linear-gradient(90deg,var(--accent1),var(--accent2));border:none;padding:12px 18px;border-radius:10px;color:#071827;font-weight:700;cursor:pointer;transform:translateZ(0);transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
+    .btn.secondary{background:transparent;color:var(--accent2);border:1px solid rgba(255,209,102,0.08)}
+    .btn:hover{transform:translateY(-4px);box-shadow:0 8px 28px rgba(255,125,90,0.12)}
+
+    /* hero-right video card */
+    .hero-right{position:relative;border-radius:20px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);box-shadow:0 6px 40px rgba(2,6,23,0.6);min-height:420px}
+    .hero-right video, .hero-right .poster{width:100%;height:100%;object-fit:cover;display:block}
+    .overlay-card{position:absolute;left:18px;bottom:18px;background:var(--glass);backdrop-filter:blur(6px);padding:14px;border-radius:12px;display:flex;align-items:center;gap:12px}
+    .guide-photo{width:64px;height:64px;border-radius:10px;object-fit:cover;border:2px solid rgba(255,255,255,0.06)}
+
+    /* STATS */
+    .stats{display:flex;gap:14px;margin-top:26px}
+    .stat{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:14px;border-radius:12px;flex:1;text-align:center}
+    .stat strong{display:block;font-size:20px}
+    .muted{color:var(--muted);font-size:13px}
+
+    /* SECTIONS */
+    section{padding:58px 0;border-top:1px solid rgba(255,255,255,0.02)}
+    section .heading{display:flex;align-items:end;justify-content:space-between;gap:12px}
+    section h2{margin:0;font-size:20px}
+    .sub{color:var(--muted);font-size:14px}
+
+    /* Languages */
+    .langs{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+    .lang-card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:14px;border-radius:12px;min-width:160px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .22s var(--ease)}
+    .lang-card:hover{transform:translateY(-6px)}
+    .flag{font-size:28px}
+    .proficiency{font-size:12px;color:var(--muted)}
+
+    /* Timeline */
+    .timeline{display:grid;grid-template-columns:1fr;gap:12px;margin-top:18px}
+    .tl-item{background:rgba(255,255,255,0.02);padding:12px;border-radius:10px}
+
+    /* Reviews */
+    .reviews{display:flex;gap:12px;align-items:center;margin-top:18px}
+    .review-card{min-width:260px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);padding:14px;border-radius:12px}
+    .stars{color:var(--accent2);font-weight:700}
+    .carousel{display:flex;gap:12px;overflow:hidden}
+
+    /* Awards */
+    .awards{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:18px}
+    .award{padding:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border-radius:12px;transition:transform .22s var(--ease),box-shadow .22s var(--ease)}
+    .award:hover{transform:translateY(-8px);box-shadow:0 12px 30px rgba(255,209,102,0.06)}
+
+    /* Gallery */
+    .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:18px}
+    .gallery img{width:100%;height:180px;object-fit:cover;border-radius:10px;cursor:pointer;transition:transform .25s var(--ease)}
+    .gallery img:hover{transform:scale(1.03)}
+
+    /* Map placeholder */
+    .map{height:300px;border-radius:12px;background:linear-gradient(135deg,#07203380, #0a193580);display:flex;align-items:center;justify-content:center;color:var(--muted);position:relative}
+    .map .pin{position:absolute;background:var(--accent1);width:12px;height:12px;border-radius:50%;box-shadow:0 6px 18px rgba(255,125,90,0.12)}
+
+    /* Booking CTA */
+    .cta-strip{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px;border-radius:12px;background:linear-gradient(90deg,rgba(255,255,255,0.02),transparent)}
+
+    /* Footer */
+    footer{padding:28px 0;color:var(--muted)}
+
+    /* Responsive */
+    @media (max-width:980px){.hero{grid-template-columns:1fr;}.hero-right{min-height:300px}.container{padding:18px}}
+
+    /* Animation helpers */
+    .reveal{opacity:0;transform:translateY(20px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+    .reveal.active{opacity:1;transform:none}
+
+    /* small touches */
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--accent2);display:inline-block;margin-right:8px}
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header class="hero">
+      <div class="hero-left">
+        <div class="eyebrow">Certified Guide • Local Expert</div>
+        <h1>Meet Krishna — Your Trusted Tourist Guide</h1>
+        <p class="lead">Personalized tours, local secrets, and authentic experiences. 150+ destinations covered across South India and beyond. Multilingual guide ensuring memorable journeys.</p>
+
+        <div class="stats reveal">
+          <div class="stat"><strong id="places">0</strong><span class="muted">Places Covered</span></div>
+          <div class="stat"><strong id="years">0</strong><span class="muted">Years Experience</span></div>
+          <div class="stat"><strong id="travellers">0</strong><span class="muted">Happy Travellers</span></div>
+        </div>
+
+        <div class="cta-row">
+          <button class="btn" id="bookBtn">Book Your Journey</button>
+          <button class="btn secondary" id="contactBtn">Contact</button>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <video autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=1600&auto=format&fit=crop&s=placeholder">
+          <source src="https://cdn.coverr.co/videos/coverr-a-breeze-through-palm-trees-1575" type="video/mp4">
+        </video>
+        <div class="overlay-card">
+          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=800&auto=format&fit=crop&s=placeholder" alt="Guide" class="guide-photo">
+          <div>
+            <div style="font-weight:700">Krishna R.</div>
+            <div class="muted" style="font-size:13px">Languages: English · Telugu · Hindi · Tamil · Kannada</div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <section id="about">
+      <div class="heading">
+        <div>
+          <h2>About & Achievements</h2>
+          <div class="sub">Story, timeline, and notable milestones</div>
+        </div>
+      </div>
+
+      <div class="timeline reveal" aria-hidden="false">
+        <div class="tl-item"><strong>2015</strong> — Started guiding with small cultural walks in coastal towns.</div>
+        <div class="tl-item"><strong>2018</strong> — 50+ destinations, featured in local travel magazine.</div>
+        <div class="tl-item"><strong>2021</strong> — Launched multi-day heritage tours; partnered with local homestays.</div>
+        <div class="tl-item"><strong>2024</strong> — Completed 150+ places covered and 2000+ travellers guided.</div>
+      </div>
+
+    </section>
+
+    <section id="languages">
+      <div class="heading">
+        <div>
+          <h2>Languages</h2>
+          <div class="sub">Comfortable speaking and conducting tours in these languages</div>
+        </div>
+      </div>
+
+      <div class="langs reveal">
+        <div class="lang-card" tabindex="0" role="button" aria-pressed="false">
+          <div class="flag">🇮🇳</div>
+          <div>
+            <div style="font-weight:700">English</div>
+            <div class="proficiency">Fluent — Professional tours</div>
+          </div>
+        </div>
+        <div class="lang-card" tabindex="0">
+          <div class="flag">🇮🇳</div>
+          <div>
+            <div style="font-weight:700">Telugu</div>
+            <div class="proficiency">Native</div>
+          </div>
+        </div>
+        <div class="lang-card" tabindex="0">
+          <div class="flag">🇮🇳</div>
+          <div>
+            <div style="font-weight:700">Hindi</div>
+            <div class="proficiency">Advanced</div>
+          </div>
+        </div>
+        <div class="lang-card" tabindex="0">
+          <div class="flag">🇮🇳</div>
+          <div>
+            <div style="font-weight:700">Tamil</div>
+            <div class="proficiency">Conversational</div>
+          </div>
+        </div>
+        <div class="lang-card" tabindex="0">
+          <div class="flag">🇮🇳</div>
+          <div>
+            <div style="font-weight:700">Kannada</div>
+            <div class="proficiency">Conversational</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="reviews">
+      <div class="heading">
+        <div>
+          <h2>Traveller Reviews</h2>
+          <div class="sub">What travellers say after their tours</div>
+        </div>
+      </div>
+
+      <div class="reviews reveal">
+        <button id="prev" aria-label="Prev" class="btn secondary">◀</button>
+        <div class="carousel" id="carousel" aria-live="polite">
+          <div class="review-card" role="article">
+            <div style="display:flex;gap:10px;align-items:center"><img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&auto=format&fit=crop&s=placeholder" alt="traveller" style="width:44px;height:44px;border-radius:8px;object-fit:cover"><div><strong>Priya</strong><div class="muted" style="font-size:12px">Mumbai</div></div></div>
+            <div style="margin-top:8px" class="stars">★★★★★</div>
+            <p style="margin-top:8px;color:var(--muted)">Krishna made our Kerala trip unforgettable — local foods, offbeat spots, and super-friendly service.</p>
+          </div>
+          <div class="review-card" role="article">
+            <div style="display:flex;gap:10px;align-items:center"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=200&auto=format&fit=crop&s=placeholder" alt="traveller" style="width:44px;height:44px;border-radius:8px;object-fit:cover"><div><strong>Rahul</strong><div class="muted" style="font-size:12px">Bengaluru</div></div></div>
+            <div style="margin-top:8px" class="stars">★★★★☆</div>
+            <p style="margin-top:8px;color:var(--muted)">Practical and fun — great for families. Highly recommended.</p>
+          </div>
+          <div class="review-card" role="article">
+            <div style="display:flex;gap:10px;align-items:center"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=200&auto=format&fit=crop&s=placeholder" alt="traveller" style="width:44px;height:44px;border-radius:8px;object-fit:cover"><div><strong>Asha</strong><div class="muted" style="font-size:12px">Hyderabad</div></div></div>
+            <div style="margin-top:8px" class="stars">★★★★★</div>
+            <p style="margin-top:8px;color:var(--muted)">Personalized tour with cultural depth. Loved the storytelling!</p>
+          </div>
+        </div>
+        <button id="next" aria-label="Next" class="btn secondary">▶</button>
+      </div>
+    </section>
+
+    <section id="awards">
+      <div class="heading">
+        <div>
+          <h2>Awards & Recognition</h2>
+          <div class="sub">Certified, trusted, and locally awarded</div>
+        </div>
+      </div>
+
+      <div class="awards reveal">
+        <div class="award"><strong>Best Local Guide 2019</strong><div class="muted" style="font-size:12px">Regional Tourism Board</div></div>
+        <div class="award"><strong>Heritage Steward 2021</strong><div class="muted" style="font-size:12px">Cultural Preservation Society</div></div>
+        <div class="award"><strong>Top 10 Experiences 2023</strong><div class="muted" style="font-size:12px">Travel Magazine</div></div>
+        <div class="award"><strong>Community Champion</strong><div class="muted" style="font-size:12px">Local NGO</div></div>
+      </div>
+    </section>
+
+    <section id="gallery">
+      <div class="heading">
+        <div>
+          <h2>Tour Gallery</h2>
+          <div class="sub">A curated selection of places covered</div>
+        </div>
+      </div>
+
+      <div class="gallery reveal" id="galleryGrid">
+        <img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=800&auto=format&fit=crop&s=placeholder" alt="place1" tabindex="0">
+        <img src="https://images.unsplash.com/photo-1505678261036-a3fcc5e884ee?q=80&w=800&auto=format&fit=crop&s=placeholder" alt="place2" tabindex="0">
+        <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=800&auto=format&fit=crop&s=placeholder" alt="place3" tabindex="0">
+        <img src="https://images.unsplash.com/photo-1526779259212-5a83b50f30b3?q=80&w=800&auto=format&fit=crop&s=placeholder" alt="place4" tabindex="0">
+      </div>
+    </section>
+
+    <section id="map">
+      <div class="heading">
+        <div>
+          <h2>Interactive Map</h2>
+          <div class="sub">Hover markers to see sample locations covered</div>
+        </div>
+      </div>
+      <div class="map reveal" id="miniMap" aria-hidden="false">
+        <div style="position:relative;width:100%;height:100%">
+          <!-- simple pins as examples -->
+          <div class="pin" title="Pondicherry" style="left:18%;top:48%"></div>
+          <div class="pin" title="Hampi" style="left:42%;top:56%"></div>
+          <div class="pin" title="Munnar" style="left:28%;top:32%"></div>
+          <div class="pin" title="Charminar" style="left:56%;top:44%"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="book">
+      <div class="heading">
+        <div>
+          <h2>Ready to Book?</h2>
+          <div class="sub">Personalized itineraries, group tours, and private experiences</div>
+        </div>
+      </div>
+
+      <div class="cta-strip reveal" role="region" aria-label="Booking">
+        <div>
+          <div style="font-weight:700">Krishna — Available for bookings</div>
+          <div class="muted">Weekdays & Weekends · Small groups welcome · Custom packages</div>
+        </div>
+        <div style="display:flex;gap:10px">
+          <button class="btn" id="bookTop">Book Now</button>
+          <button class="btn secondary" id="quote">Get Quote</button>
+        </div>
+      </div>
+
+    </section>
+
+    <footer class="reveal">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <div>
+          <strong>Krishna R. — Tourist Guide</strong>
+          <div class="muted">Email: <a href="mailto:krishna@example.com">krishna@example.com</a> · Phone: +91 98XXXXXXX</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center">
+          <a href="#" aria-label="instagram" class="muted">Instagram</a>
+          <a href="#" aria-label="facebook" class="muted">Facebook</a>
+          <a href="#" aria-label="whatsapp" class="muted">Whatsapp</a>
+        </div>
+      </div>
+      <div style="margin-top:12px;color:var(--muted);font-size:13px">© <span id="year"></span> Krishna — All rights reserved</div>
+    </footer>
+
+  </div>
+
+  <!-- Lightbox element -->
+  <div id="lightbox" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,0.8);z-index:9999">
+    <img id="lightboxImg" src="" alt="expanded" style="max-width:92%;max-height:86%;border-radius:12px;box-shadow:0 20px 50px rgba(2,6,23,0.8)">
+  </div>
+
+  <script>
+    // small utility: animate numbers
+    function animateValue(id, start, end, duration){
+      const el=document.getElementById(id);let startTime=null;const step=(timestamp)=>{
+        if(!startTime)startTime=timestamp;const progress=Math.min((timestamp-startTime)/duration,1);
+        const val=Math.floor(progress*(end-start)+start);
+        el.textContent=val+(id==='places'?'+':'');
+        if(progress<1)requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+
+    // reveal on scroll
+    const observer = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting) entry.target.classList.add('active');
+      });
+    },{threshold:0.12});
+    document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+    // initial counts
+    document.addEventListener('DOMContentLoaded',()=>{
+      animateValue('places',0,150,1100);
+      animateValue('years',0,9,900);
+      animateValue('travellers',0,2000,1400);
+      document.getElementById('year').textContent=new Date().getFullYear();
+    });
+
+    // Simple carousel controls
+    (function(){
+      const carousel=document.getElementById('carousel');
+      const prev=document.getElementById('prev');
+      const next=document.getElementById('next');
+      let idx=0;
+      function scrollToIndex(i){
+        const cardWidth = carousel.children[0].getBoundingClientRect().width + 12;
+        carousel.scrollTo({left: i*cardWidth, behavior:'smooth'});
+      }
+      prev.addEventListener('click',()=>{ idx=Math.max(0,idx-1); scrollToIndex(idx); });
+      next.addEventListener('click',()=>{ idx=Math.min(carousel.children.length-1, idx+1); scrollToIndex(idx); });
+      // keyboard accessibility
+      carousel.addEventListener('keydown',e=>{
+        if(e.key==='ArrowRight') next.click(); if(e.key==='ArrowLeft') prev.click();
+      });
+    })();
+
+    // Gallery Lightbox
+    document.querySelectorAll('#galleryGrid img').forEach(img=>{
+      img.addEventListener('click',()=>{
+        const lb=document.getElementById('lightbox');
+        document.getElementById('lightboxImg').src=img.src; lb.style.display='flex';
+      });
+      img.addEventListener('keydown',e=>{ if(e.key==='Enter') img.click(); });
+    });
+    document.getElementById('lightbox').addEventListener('click',()=>{ document.getElementById('lightbox').style.display='none'; });
+
+    // Smooth scroll for booking button
+    document.querySelectorAll('#bookBtn,#bookTop').forEach(b=>b.addEventListener('click',()=>{ document.getElementById('book').scrollIntoView({behavior:'smooth'}); }));
+    document.getElementById('contactBtn').addEventListener('click',()=>{ window.location.href='mailto:krishna@example.com'; });
+
+    // small accessibility: allow space/enter on lang cards
+    document.querySelectorAll('.lang-card').forEach(card=>{
+      card.addEventListener('keydown',(e)=>{ if(e.key==='Enter' || e.key===' ') card.classList.toggle('selected'); });
+    });
+
+    // Performance note: lazy-load images when possible
+    document.querySelectorAll('img').forEach(i=>i.loading='lazy');
+  </script>
+</body>
+</html>
+
