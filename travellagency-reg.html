@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartTravel — Travel Agency Registration</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+  /* Same CSS as your template */
+  :root{
+    --bg-a:#0ea5e9;
+    --bg-b:#7c3aed;
+    --accent-sky: #00e5ff;
+    --accent-orange: #ff9800;
+    --card-bg: rgba(255,255,255,0.08);
+    --glass-border: rgba(255,255,255,0.16);
+    --muted: rgba(255,255,255,0.9);
+    --radius: 16px;
+    --focus-glow: 0 10px 30px rgba(0,229,255,0.12);
+    --shadow: 0 20px 60px rgba(2,6,23,0.35);
+    color-scheme: light;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;color:var(--muted);background:linear-gradient(120deg,var(--bg-a),var(--bg-b));background-size:300% 300%;animation:gradMove 18s linear infinite;}
+  @keyframes gradMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+  .bg-shapes{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .shape{position:absolute;border-radius:50%;filter:blur(36px);opacity:0.18;mix-blend-mode:screen;transform:translate3d(0,0,0);animation:floaty 10s ease-in-out infinite;}
+  .shape.s1{width:420px;height:420px;background:linear-gradient(180deg,rgba(255,255,255,0.14),transparent);left:-8%;top:6%}
+  .shape.s2{width:320px;height:320px;background:linear-gradient(180deg,rgba(255,200,120,0.09),transparent);right:-6%;bottom:6%;animation-duration:14s}
+  .shape.s3{width:240px;height:240px;background:linear-gradient(180deg,rgba(0,229,255,0.07),transparent);left:20%;bottom:12%;animation-duration:12s}
+  @keyframes floaty{0%{transform:translateY(0)}50%{transform:translateY(-18px)}100%{transform:translateY(0)}}
+
+  .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:32px;position:relative;z-index:1}
+  .card{width:100%;max-width:980px;border-radius:20px;padding:28px;background:linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0.03));backdrop-filter:blur(10px) saturate(140%);box-shadow:var(--shadow);border:1px solid var(--glass-border);position:relative;overflow:hidden;}
+
+  .header{display:flex;align-items:center;gap:18px;margin-bottom:6px}
+  .logo{display:flex;flex-direction:column}
+  .brand{font-weight:800;font-size:20px;color:#fff}
+  .tag{font-size:12px;color:rgba(255,255,255,0.85)}
+
+  .intro{margin-top:6px;margin-bottom:18px}
+  .title{font-size:26px;font-weight:800;color:transparent;background:linear-gradient(90deg,#fff,#ffe0b2,#00e5ff);-webkit-background-clip:text}
+  .desc{margin-top:8px;color:rgba(255,255,255,0.92);font-size:14px}
+
+  form{display:grid;grid-template-columns:1fr;gap:14px;margin-top:18px}
+  @media(min-width:880px){form{grid-template-columns:repeat(2,1fr)}}
+  .full{grid-column:1/-1}
+  label{display:block;font-size:13px;color:rgba(255,255,255,0.95);margin-bottom:8px;font-weight:700}
+
+  input, select, textarea {
+    width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.18);
+    background:#fff;color:#222;outline:none;font-size:14px;font-weight:600;
+    transition:box-shadow .18s ease,transform .12s ease,border-color .18s ease;
+  }
+  textarea{min-height:110px;resize:vertical}
+  input:focus, select:focus, textarea:focus{border-color:var(--accent-orange);box-shadow:0 6px 26px rgba(255,152,0,0.25);transform:translateY(-2px);}
+  input:hover, select:hover, textarea:hover{border-color:var(--accent-sky);}
+
+  .actions{display:flex;gap:12px;align-items:center;justify-content:flex-end;grid-column:1/-1;margin-top:8px}
+  .btn{padding:12px 18px;border-radius:12px;border:none;font-weight:800;cursor:pointer;color:#042b35;background:linear-gradient(90deg,#fff,#ffe0b2);box-shadow:0 12px 30px rgba(0,0,0,0.12);transition:transform .14s ease,box-shadow .2s ease;}
+  .btn:hover{transform:translateY(-6px);box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff}
+  </style>
+</head>
+<body>
+  <div class="bg-shapes">
+    <div class="shape s1"></div>
+    <div class="shape s2"></div>
+    <div class="shape s3"></div>
+  </div>
+  
+  <div class="wrap">
+    <div class="card">
+      <div class="header">
+        <div class="logo">
+          <span class="brand">🌍 SmartTravel</span>
+          <span class="tag">Travel Agency Registration</span>
+        </div>
+      </div>
+      <div class="intro">
+        <h2 class="title" id="formTitle">Travel Agency Registration Form</h2>
+        <p class="desc">Register your travel agency, collaborate with platforms, and expand your services across India.</p>
+      </div>
+
+      <!-- Language Selector -->
+      <label for="language">🌐 Select Language:</label>
+      <select id="language" onchange="translatePage()">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी (Hindi)</option>
+        <option value="te">తెలుగు (Telugu)</option>
+        <option value="ta">தமிழ் (Tamil)</option>
+        <option value="kn">ಕನ್ನಡ (Kannada)</option>
+        <option value="ml">മലയാളം (Malayalam)</option>
+      </select>
+
+      <form>
+        <div class="full">
+          <label id="q1">Agency Name</label>
+          <input type="text" required>
+        </div>
+        <div>
+          <label id="q2">Owner/Manager Full Name</label>
+          <input type="text" required>
+        </div>
+        <div>
+          <label id="q3">Contact Number</label>
+          <input type="tel" required>
+        </div>
+        <div>
+          <label id="q4">Email Address</label>
+          <input type="email" required>
+        </div>
+        <div class="full">
+          <label id="q5">Registered Office Address</label>
+          <textarea required></textarea>
+        </div>
+        <div>
+          <label id="q6">Do you provide Domestic or International Packages?</label>
+          <select required>
+            <option>Domestic</option>
+            <option>International</option>
+            <option>Both</option>
+          </select>
+        </div>
+        <div>
+          <label id="q7">Do you collaborate with MakeMyTrip, Yatra, or others?</label>
+          <select required>
+            <option>Yes</option>
+            <option>No</option>
+            <option>Planning to Collaborate</option>
+          </select>
+        </div>
+        <div>
+          <label id="q8">Number of Employees/Agents working</label>
+          <input type="number">
+        </div>
+        <div class="full">
+          <label id="q9">What services do you provide? (Flight bookings, Packages, Hotel tie-ups, etc.)</label>
+          <textarea></textarea>
+        </div>
+        <div class="full">
+          <label id="q10">Upload Registration Documents</label>
+          <input type="file">
+        </div>
+        <div class="actions">
+          <button type="submit" id="submitBtn" class="btn">Register Agency</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const translations = {
+      en:{formTitle:"Travel Agency Registration Form",q1:"Agency Name",q2:"Owner/Manager Full Name",q3:"Contact Number",q4:"Email Address",q5:"Registered Office Address",q6:"Do you provide Domestic or International Packages?",q7:"Do you collaborate with MakeMyTrip, Yatra, or others?",q8:"Number of Employees/Agents working",q9:"What services do you provide? (Flight bookings, Packages, Hotel tie-ups, etc.)",q10:"Upload Registration Documents",submitBtn:"Register Agency"},
+      hi:{formTitle:"ट्रैवल एजेंसी पंजीकरण फॉर्म",q1:"एजेंसी का नाम",q2:"मालिक/प्रबंधक का पूरा नाम",q3:"संपर्क नंबर",q4:"ईमेल पता",q5:"पंजीकृत कार्यालय का पता",q6:"क्या आप घरेलू या अंतरराष्ट्रीय पैकेज प्रदान करते हैं?",q7:"क्या आप MakeMyTrip, Yatra आदि से सहयोग करते हैं?",q8:"कर्मचारियों/एजेंटों की संख्या",q9:"आप कौन सी सेवाएं प्रदान करते हैं? (फ्लाइट बुकिंग, पैकेज, होटल टाई-अप आदि)",q10:"पंजीकरण दस्तावेज़ अपलोड करें",submitBtn:"एजेंसी पंजीकृत करें"},
+      te:{formTitle:"ట్రావెల్ ఏజెన్సీ నమోదు ఫారం",q1:"ఏజెన్సీ పేరు",q2:"యజమాని/మేనేజర్ పూర్తి పేరు",q3:"సంప్రదించు నంబర్",q4:"ఇమెయిల్ చిరునామా",q5:"నమోదిత కార్యాలయ చిరునామా",q6:"మీరు దేశీయ లేదా అంతర్జాతీయ ప్యాకేజీలు అందిస్తారా?",q7:"మీరు MakeMyTrip, Yatra వంటి వాటితో కలసి పనిచేస్తున్నారా?",q8:"ఉద్యోగులు/ఏజెంట్ల సంఖ్య",q9:"మీరు ఏ సేవలు అందిస్తారు? (ఫ్లైట్ బుకింగ్‌లు, ప్యాకేజీలు, హోటల్ టై-అప్స్ మొదలైనవి)",q10:"నమోదు పత్రాలను అప్లోడ్ చేయండి",submitBtn:"ఏజెన్సీని నమోదు చేయండి"},
+      ta:{formTitle:"பயண நிறுவனம் பதிவு படிவம்",q1:"நிறுவனத்தின் பெயர்",q2:"உரிமையாளர்/மேலாளரின் பெயர்",q3:"தொடர்பு எண்",q4:"மின்னஞ்சல் முகவரி",q5:"பதிவு செய்யப்பட்ட அலுவலக முகவரி",q6:"நீங்கள் உள்நாட்டு அல்லது சர்வதேச பேக்கேஜ்களை வழங்குகிறீர்களா?",q7:"நீங்கள் MakeMyTrip, Yatra உடன் இணைந்துள்ளீர்களா?",q8:"பணியாளர்கள்/முகவர்கள் எண்ணிக்கை",q9:"நீங்கள் எந்த சேவைகளை வழங்குகிறீர்கள்? (விமான முன்பதிவு, பேக்கேஜ்கள், ஹோட்டல் இணைப்புகள்)",q10:"பதிவு ஆவணங்களை பதிவேற்றவும்",submitBtn:"நிறுவனத்தை பதிவு செய்யவும்"},
+      kn:{formTitle:"ಪ್ರಯಾಣ ಏಜೆನ್ಸಿ ನೋಂದಣಿ ಫಾರ್ಮ್",q1:"ಏಜೆನ್ಸಿಯ ಹೆಸರು",q2:"ಮಾಲೀಕ/ಮ್ಯಾನೇಜರ್ ಪೂರ್ಣ ಹೆಸರು",q3:"ಸಂಪರ್ಕ ಸಂಖ್ಯೆ",q4:"ಇಮೇಲ್ ವಿಳಾಸ",q5:"ನೋಂದಾಯಿತ ಕಚೇರಿ ವಿಳಾಸ",q6:"ನೀವು ದೇಶೀಯ ಅಥವಾ ಅಂತರರಾಷ್ಟ್ರೀಯ ಪ್ಯಾಕೇಜ್‌ಗಳನ್ನು ಒದಗಿಸುತ್ತೀರಾ?",q7:"ನೀವು MakeMyTrip, Yatra ಮುಂತಾದವುಗಳೊಂದಿಗೆ ಸಹಕರಿಸುತ್ತೀರಾ?",q8:"ಉದ್ಯೋಗಿಗಳು/ಏಜೆಂಟ್‌ಗಳ ಸಂಖ್ಯೆ",q9:"ನೀವು ಯಾವ ಸೇವೆಗಳನ್ನು ಒದಗಿಸುತ್ತೀರಿ? (ಫ್ಲೈಟ್ ಬುಕ್ಕಿಂಗ್‌ಗಳು, ಪ್ಯಾಕೇಜ್‌ಗಳು, ಹೋಟೆಲ್ ಒಪ್ಪಂದಗಳು)",q10:"ನೋಂದಣಿ ದಾಖಲೆಗಳನ್ನು ಅಪ್ಲೋಡ್ ಮಾಡಿ",submitBtn:"ಏಜೆನ್ಸಿಯನ್ನು ನೋಂದಣಿ ಮಾಡಿ"},
+      ml:{formTitle:"ട്രാവൽ ഏജൻസി രജിസ്ട്രേഷൻ ഫോം",q1:"ഏജൻസിയുടെ പേര്",q2:"ഉടമ/മാനേജർ പേര്",q3:"സമ്പർക്ക നമ്പർ",q4:"ഇമെയിൽ വിലാസം",q5:"രജിസ്റ്റർ ചെയ്ത ഓഫീസ് വിലാസം",q6:"നിങ്ങൾ ആഭ്യന്തര അല്ലെങ്കിൽ അന്താരാഷ്ട്ര പാക്കേജുകൾ നൽകുന്നുണ്ടോ?",q7:"നിങ്ങൾ MakeMyTrip, Yatra എന്നിവയുമായി സഹകരിക്കുന്നുണ്ടോ?",q8:"ജീവനക്കാർ/ഏജന്റുമാരുടെ എണ്ണം",q9:"നിങ്ങൾ ഏത് സേവനങ്ങൾ നൽകുന്നു? (ഫ്ലൈറ്റ് ബുക്കിംഗ്, പാക്കേജുകൾ, ഹോട്ടൽ ടൈ-അപ്പുകൾ)",q10:"രജിസ്ട്രേഷൻ രേഖകൾ അപ്ലോഡ് ചെയ്യുക",submitBtn:"ഏജൻസിയെ രജിസ്റ്റർ ചെയ്യുക"}
+    };
+
+    function translatePage() {
+      const lang = document.getElementById("language").value;
+      document.getElementById("formTitle").innerText = translations[lang].formTitle;
+      document.getElementById("q1").innerText = translations[lang].q1;
+      document.getElementById("q2").innerText = translations[lang].q2;
+      document.getElementById("q3").innerText = translations[lang].q3;
+      document.getElementById("q4").innerText = translations[lang].q4;
+      document.getElementById("q5").innerText = translations[lang].q5;
+      document.getElementById("q6").innerText = translations[lang].q6;
+      document.getElementById("q7").innerText = translations[lang].q7;
+      document.getElementById("q8").innerText = translations[lang].q8;
+      document.getElementById("q9").innerText = translations[lang].q9;
+      document.getElementById("q10").innerText = translations[lang].q10;
+      document.getElementById("submitBtn").innerText = translations[lang].submitBtn;
+    }
+  </script>
+</body>
+</html>
+
