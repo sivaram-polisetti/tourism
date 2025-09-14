@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Traveller or Service Provider — Landing</title>
+
+  <!-- Fonts & Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Noto+Sans+Devanagari:wght@400;600&family=Noto+Sans+Tamil:wght@400;600&family=Noto+Sans+Telugu:wght@400;600&family=Noto+Sans+Kannada:wght@400;600&family=Noto+Sans+Malayalam:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root{
+      --bg1:#cfeffd;
+      --bg2:#9ad6ff;
+      --bg3:#7fc8ff;
+      --glass: rgba(255,255,255,0.16);
+      --glass-hr: rgba(255,255,255,0.22);
+    } 
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: 'Poppins', 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg,var(--bg1),var(--bg2) 40%,var(--bg3));
+      overflow-x:hidden;
+    }
+
+    /* Language specific fonts */
+    :lang(hi) { font-family: 'Noto Sans Devanagari', 'Segoe UI', sans-serif; }
+    :lang(te) { font-family: 'Noto Sans Telugu', 'Segoe UI', sans-serif; }
+    :lang(ta) { font-family: 'Noto Sans Tamil', 'Segoe UI', sans-serif; }
+    :lang(kn) { font-family: 'Noto Sans Kannada', 'Segoe UI', sans-serif; }
+    :lang(ml) { font-family: 'Noto Sans Malayalam', 'Segoe UI', sans-serif; }
+
+    /* ✅ Fix: keep Font Awesome icons visible */
+    .fa, .fa-solid, .icon {
+      font-family: "Font Awesome 6 Free" !important;
+      font-weight: 900 !important;
+    }
+
+    .bg-icons{position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden;}
+    .bg-icons .icon{
+      position:absolute; color: rgba(255,255,255,0.95);
+      font-size: clamp(22px, 3.5vw, 60px);
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,0.12));
+      opacity:0.9;
+    }
+    .wrap{position:relative; z-index:10; min-height:100vh; display:flex; align-items:center; justify-content:center; padding:40px 20px;}
+    .card-choices{
+      width:100%; max-width:420px; text-align:center;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border-radius:12px; padding:28px;
+      backdrop-filter: blur(8px);
+      box-shadow:0 8px 30px rgba(16,40,80,0.12);
+      position: relative;
+      transition: opacity 0.4s ease;
+    }
+    .card-choices.fade { opacity:0.4; }
+
+    .card-choices h1{margin:0 0 18px; font-size:22px; color:#023e63; font-weight:700;}
+    .subtitle{color:#024b70; margin-bottom:10px; font-size:14px;}
+    .choice{
+      display:block; width:100%; text-align:left; padding:14px 16px; margin:10px 0;
+      border-radius:8px; background:var(--glass); color:#012d3a; text-decoration:none;
+      font-weight:600; transition:transform .22s ease, background .22s ease, box-shadow .22s ease;
+      border: 1px solid var(--glass-hr);
+    }
+    .choice:hover{ transform:translateY(-6px); background: rgba(255,255,255,0.26); box-shadow:0 12px 30px rgba(10,30,60,0.12) }
+    .choice .left{ display:flex; gap:12px; align-items:center }
+    .choice i{ font-size:20px; color: #ffd34d; width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.06); border-radius:6px }
+    .choice .meta{ font-size:15px }
+    .choice .desc{ display:block; margin-top:4px; font-size:13px; opacity:0.9 }
+    .footer-note{ font-size:12px; opacity:0.85; margin-top:10px; color:#01364d }
+
+    /* === Semi-Circle Language Menu with Rainbow Colors === */
+    .lang-menu-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    .lang-btn {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(6px);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      padding: 10px 18px;
+      border-radius: 50px;
+      font-weight: 600;
+      color: #023e63;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+    }
+    .lang-btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+      transform: scale(1.05);
+    }
+    .lang-menu {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%) scale(0);
+      transform-origin: bottom center;
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      width: 300px;
+      height: 140px;
+      border-top-left-radius: 140px;
+      border-top-right-radius: 140px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+      padding: 20px;
+      transition: transform 0.4s ease;
+      z-index: 5;
+      align-content: flex-start;
+    }
+    .lang-menu.show { transform: translateX(-50%) scale(1); }
+    .lang-option {
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      color: white;
+      transition: transform 0.25s ease, filter 0.25s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      padding: 6px;
+      line-height: 1.1;
+    }
+    /* Rainbow Colors */
+    .lang-option:nth-child(1){background:#FF0000;}
+    .lang-option:nth-child(2){background:#FF7F00;}
+    .lang-option:nth-child(3){background:#FFFF00; color:#000;}
+    .lang-option:nth-child(4){background:#00FF00;}
+    .lang-option:nth-child(5){background:#0000FF;}
+    .lang-option:nth-child(6){background:#8B00FF;}
+    .lang-option:hover {
+      transform: scale(1.15);
+      filter: brightness(1.2);
+    }
+    @media (max-width: 500px) {
+      .lang-menu {
+        width: 240px;
+        height: 110px;
+        border-top-left-radius: 110px;
+        border-top-right-radius: 110px;
+      }
+      .lang-option {
+        width: 46px;
+        height: 46px;
+        font-size: 11px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Floating icons -->
+  <div class="bg-icons" id="bgIcons"></div>
+
+  <div class="wrap">
+    <div class="card-choices" id="cardBox">
+
+      <!-- Semi-Circle Language Selector -->
+      <div class="lang-menu-container">
+        <button class="lang-btn" id="langToggle">🌐 English</button>
+        <div class="lang-menu" id="langMenu">
+          <div class="lang-option" data-lang="en">English</div>
+          <div class="lang-option" data-lang="hi">हिंदी</div>
+          <div class="lang-option" data-lang="te">తెలుగు</div>
+          <div class="lang-option" data-lang="ta">தமிழ்</div>
+          <div class="lang-option" data-lang="kn">ಕನ್ನಡ</div>
+          <div class="lang-option" data-lang="ml">മലയാളം</div>
+        </div>
+      </div>
+
+      <h1 id="whoHeading"></h1>
+      <div class="subtitle" id="subtitle"></div>
+
+      <a href="https://smart-tourism-phantomz.lovable.app/" class="choice" id="travellerBtn">
+        <div class="left">
+          <i class="fa-solid fa-plane"></i>
+          <div>
+            <div class="meta" id="travellerTitle"></div>
+            <span class="desc" id="travellerDesc"></span>
+          </div>
+        </div>
+      </a>
+
+      <a href="/home/sivaram/Desktop/project/final_servie.html" class="choice" id="serviceBtn">
+        <div class="left">
+          <i class="fa-solid fa-hotel"></i>
+          <div>
+            <div class="meta" id="serviceTitle"></div>
+            <span class="desc" id="serviceDesc"></span>
+          </div>
+        </div>
+      </a>
+
+      <div class="footer-note" id="footerNote"></div>
+    </div>
+  </div>
+
+  <script>
+    const translations = {
+      en: { who: "Who are you?", subtitle: "Choose one to continue — we'll take you to the right experience.", traveller: "Traveller", travellerDesc: "Find flights, hotels, food & local experiences", service: "Service Provider", serviceDesc: "List hotels, transport, and guide services", footer: "Tip: click an option." },
+      hi: { who: "आप कौन हैं?", subtitle: "जारी रखने के लिए एक चुनें — हम आपको सही अनुभव पर ले जाएंगे।", traveller: "यात्री", travellerDesc: "उड़ानें, होटल, भोजन और स्थानीय अनुभव खोजें", service: "सेवा प्रदाता", serviceDesc: "होटल, परिवहन और गाइड सेवाएँ सूचीबद्ध करें", footer: "सुझाव: एक विकल्प चुनें।" },
+      te: { who: "మీరు ఎవరు?", subtitle: "కొనసాగించడానికి ఒకదాన్ని ఎంచుకోండి — మేము మీను సరైన అనుభవానికి తీసుకువెళ్తాము.", traveller: "ప్రయాణికుడు", travellerDesc: "విమానాలు, హోటళ్ళు, భోజనం మరియు స్థానిక అనుభవాలను కనుగొనండి", service: "సేవలందించే వారు", serviceDesc: "హోటళ్లు, రవాణా మరియు మార్గదర్శక సేవలను జాబితా చేయండి", footer: "సూచన: ఒక ఎంపికపై క్లిక్ చేయండి." },
+      ta: { who: "நீங்கள் யார்?", subtitle: "தொடர ஒரு விருப்பத்தைத் தேர்ந்தெடுக்கவும் — நாங்கள் உங்களை சரியான அனுபவத்திற்கு அழைத்துச் செல்வோம்.", traveller: "பயணி", travellerDesc: "விமானங்கள், ஹோட்டல்கள், உணவு மற்றும் உள்ளூர் அனுபவங்களைத் தேடுங்கள்", service: "சேவை வழங்குநர்", serviceDesc: "ஹோட்டல்கள், போக்குவரத்து மற்றும் வழிகாட்டி சேவைகளை பட்டியலிடுங்கள்", footer: "உதவி: ஒரு விருப்பத்தைத் தேர்ந்தெடுக்கவும்." },
+      kn: { who: "ನೀವು ಯಾರು?", subtitle: "ಮುಂದುವರಿಸಲು ಒಂದು ಆಯ್ಕೆಯನ್ನು ಆರಿಸಿ — ನಾವು ನಿಮ್ಮನ್ನು ಸರಿಯಾದ ಅನುಭವಕ್ಕೆ ಕರೆದೊಯ್ಯುತ್ತೇವೆ.", traveller: "ಪ್ರಯಾಣಿಕ", travellerDesc: "ವಿಮಾನಗಳು, ಹೋಟೆಲ್‌ಗಳು, ಆಹಾರ ಮತ್ತು ಸ್ಥಳೀಯ ಅನುಭವಗಳನ್ನು ಹುಡುಕಿ", service: "ಸೇವಾ ಒದಗಿಸುವವರು", serviceDesc: "ಹೋಟೆಲ್‌ಗಳು, ಸಾರಿಗೆ ಮತ್ತು ಮಾರ್ಗದರ್ಶಕ ಸೇವೆಗಳನ್ನು ಪಟ್ಟಿ ಮಾಡಿ", footer: "ಸಲಹೆ: ಒಂದು ಆಯ್ಕೆಯನ್ನು ಕ್ಲಿಕ್ ಮಾಡಿ." },
+      ml: { who: "നിങ്ങൾ ആരാണ്?", subtitle: "തുടരാൻ ഒന്ന് തിരഞ്ഞെടുക്കുക — ഞങ്ങൾ നിങ്ങളെ ശരിയായ അനുഭവത്തിലേക്ക് കൊണ്ടുപോകും.", traveller: "യാത്രക്കാരൻ", travellerDesc: "വിമാനങ്ങൾ, ഹോട്ടലുകൾ, ഭക്ഷണം, പ്രാദേശിക അനുഭവങ്ങൾ കണ്ടെത്തുക", service: "സേവനദാതാവ്", serviceDesc: "ഹോട്ടലുകൾ, ഗതാഗതം, ഗൈഡ് സേവനങ്ങൾ പട്ടികപ്പെടുത്തുക", footer: "സൂചന: ഒരു ഓപ്ഷൻ ക്ലിക്ക് ചെയ്യുക." }
+    };
+
+    const langLabels = {
+      en: "English",
+      hi: "हिंदी",
+      te: "తెలుగు",
+      ta: "தமிழ்",
+      kn: "ಕನ್ನಡ",
+      ml: "മലയാളം"
+    };
+
+    function updateLanguage(lang){
+      const t = translations[lang];
+      document.documentElement.setAttribute("lang", lang);
+      document.getElementById('whoHeading').textContent = t.who;
+      document.getElementById('subtitle').textContent = t.subtitle;
+      document.getElementById('travellerTitle').textContent = t.traveller;
+      document.getElementById('travellerDesc').textContent = t.travellerDesc;
+      document.getElementById('serviceTitle').textContent = t.service;
+      document.getElementById('serviceDesc').textContent = t.serviceDesc;
+      document.getElementById('footerNote').textContent = t.footer;
+      document.getElementById('langToggle').textContent = "🌐 " + langLabels[lang];
+    }
+
+    updateLanguage('en');
+
+    const langMenu = document.getElementById('langMenu');
+    const langToggle = document.getElementById('langToggle');
+    langToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      langMenu.classList.toggle('show');
+    });
+
+    document.querySelectorAll('.lang-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        updateLanguage(opt.dataset.lang);
+        langMenu.classList.remove('show');
+      });
+    });
+
+    document.addEventListener('click', (e)=>{
+      if (!langMenu.contains(e.target) && !langToggle.contains(e.target)) {
+        langMenu.classList.remove('show');
+      }
+    });
+
+    // Floating icons animation
+    const icons = ['fa-plane','fa-hotel','fa-utensils','fa-camera','fa-car','fa-suitcase-rolling','fa-tent','fa-landmark'];
+    const bg = document.getElementById('bgIcons');
+    const created=[];
+    for(let i=0;i<12;i++){
+      const el=document.createElement('i');
+      el.className=`fa-solid ${icons[i%icons.length]} icon`;
+      el.style.left=(Math.random()*90)+'%';
+      el.style.top=(Math.random()*80)+'%';
+      el.style.fontSize=(20+Math.random()*30)+'px';
+      bg.appendChild(el);
+      created.push(el);
+    }
+    function animateIcon(el){
+      const dur=7000+Math.random()*9000;
+      el.style.transition=`transform ${dur}ms ease-in-out, opacity ${dur/2}ms linear`;
+      const dx=(Math.random()*2-1)*100;
+      const dy=(Math.random()*2-1)*80;
+      const rz=Math.floor(Math.random()*60-30);
+      el.style.transform=`translate(${dx}px,${dy}px) rotate(${rz}deg)`;
+      setTimeout(()=>animateIcon(el),dur);
+    }
+    created.forEach(el=>animateIcon(el));
+  </script>
+</body>
+</html>
